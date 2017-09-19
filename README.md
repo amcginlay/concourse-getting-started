@@ -50,11 +50,12 @@ bosh2 environments # NOTE the '192' IP Address
 curl -k https://192.168.50.6:25555/info
 ```
 
-Configure environment variables for your login credentials (remember if you move to a new terminal window you'll need to recreate these)
+Configure environment variables for your login credentials and confirm this worked (remember if you move to a new terminal window you'll need to recreate these)
 
 ```
 export BOSH_CLIENT=admin
 export BOSH_CLIENT_SECRET=`bosh2 int ~/src/$REPO_BOSH/deployments/creds.yml --path /admin_password`
+bosh2 -e vbox environment
 ```
 
 Upload a suitable stemcell and check it
