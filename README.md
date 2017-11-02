@@ -129,7 +129,7 @@ Follow the warning prompts to re-sync `fly` if necessary
 fly -t concourse sync
 ```
 
-Fork the sample app at `https://github.com/amcginlay/concourse-sample-app`.
+Fork the sample app at [https://github.com/amcginlay/concourse-sample-app](https://github.com/amcginlay/concourse-sample-app).
 
 ![Fork Me](forkme.png "Fork Me")
 
