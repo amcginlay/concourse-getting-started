@@ -156,7 +156,7 @@ fly -t concourse pipelines
 fly -t concourse unpause-pipeline -p concourse-sample-app-pipeline
 ```
 
-Return to the webpage at `http://10.244.8.2:8080`.  CLick `login` and select the `main`.  
+Return to the webpage at (http://10.244.8.2:8080)[http://10.244.8.2:8080].  CLick `login` and select the `main`.  
 
 You should now see a visual representation of our `pipeline` with the `build` job sandwiched between our two `resources` which fetch the source-code from git and push the artifact to Cloud Foundry respectively.  Concourse can handle multiple pipelines and these are listed behind the hamburger icon in the top-left hand corner.
 
