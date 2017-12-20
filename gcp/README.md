@@ -110,7 +110,12 @@ dig +short ${CONCOURSE_URL}
 Check the Concourse web UI and download the `fly` CLI utils
 ```
 open http://${CONCOURSE_URL}
-curl -L -k "https://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=darwin" -o /usr/local/bin/fly
+curl -L "http://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=darwin" -o /usr/local/bin/fly
+```
+
+Log-in via the `fly` CLI
+```
+fly -t concourse login -c http://${CONCOURSE_URL}/ -u ${CONCOURSE_USERNAME} -p ${CONCOURSE_PASSWORD}
 ```
 
 ### Task Complete!
