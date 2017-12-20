@@ -1,6 +1,6 @@
 # Player One - Choose Your Weapon:
 
 * [Google Cloud Platform](gcp/README.md)
-* [Virtual Box](vbox/README.md)
+* [VirtualBox](vbox/README.md)
 
 ... Fight!
