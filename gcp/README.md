@@ -40,27 +40,28 @@ gcloud dns --project=<PROJECT_ID> record-sets transaction start --zone=<PARENT_Z
 
 gcloud dns --project=<PROJECT_ID> \
   record-sets transaction add \
-    ns-cloud-a1.googledomains.com. \
-    ns-cloud-b1.googledomains.com. \
-    ns-cloud-c1.googledomains.com. \
-    ns-cloud-d1.googledomains.com. \
-    ns-cloud-e1.googledomains.com. \
-    ns-cloud-a2.googledomains.com. \
-    ns-cloud-b2.googledomains.com. \
-    ns-cloud-c2.googledomains.com. \
-    ns-cloud-d2.googledomains.com. \
-    ns-cloud-e2.googledomains.com. \
-    ns-cloud-a3.googledomains.com. \
-    ns-cloud-b3.googledomains.com. \
-    ns-cloud-c3.googledomains.com. \
-    ns-cloud-d3.googledomains.com. \
-    ns-cloud-e3.googledomains.com. \
-    ns-cloud-a4.googledomains.com. \
-    ns-cloud-b4.googledomains.com. \
-    ns-cloud-c4.googledomains.com. \
-    ns-cloud-d4.googledomains.com. \
-    ns-cloud-e4.googledomains.com. \
-  --name=${ENV_NAME}.${DOMAIN_NAME}. --ttl=60 --type=NS --zone=<PARENT_ZONE>
+  ns-cloud-a1.googledomains.com. \
+  ns-cloud-b1.googledomains.com. \
+  ns-cloud-c1.googledomains.com. \
+  ns-cloud-d1.googledomains.com. \
+  ns-cloud-e1.googledomains.com. \
+  ns-cloud-a2.googledomains.com. \
+  ns-cloud-b2.googledomains.com. \
+  ns-cloud-c2.googledomains.com. \
+  ns-cloud-d2.googledomains.com. \
+  ns-cloud-e2.googledomains.com. \
+  ns-cloud-a3.googledomains.com. \
+  ns-cloud-b3.googledomains.com. \
+  ns-cloud-c3.googledomains.com. \
+  ns-cloud-d3.googledomains.com. \
+  ns-cloud-e3.googledomains.com. \
+  ns-cloud-a4.googledomains.com. \
+  ns-cloud-b4.googledomains.com. \
+  ns-cloud-c4.googledomains.com. \
+  ns-cloud-d4.googledomains.com. \
+  ns-cloud-e4.googledomains.com. \
+  --name=${ENV_NAME}.${DOMAIN_NAME}. \
+  --ttl=60 --type=NS --zone=<PARENT_ZONE>
 
 gcloud dns --project=<PROJECT_ID> record-sets transaction execute --zone=<PARENT_ZONE>
 ```
