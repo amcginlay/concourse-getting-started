@@ -84,7 +84,7 @@ Grab the Concourse username and password
 ```
 export CONCOURSE_USERNAME=$(bosh interpolate concourse-vars.yml --path /basic_auth_username)
 export CONCOURSE_PASSWORD=$(bosh interpolate concourse-vars.yml --path /basic_auth_password)
-echo ${CONCOURSE_USERNAME} ${CONCOURSE_PASSWORD} # keep them to hand for use wqith the webpage
+echo ${CONCOURSE_USERNAME} ${CONCOURSE_PASSWORD} # keep them to hand for use with the webpage
 ```
 
 
