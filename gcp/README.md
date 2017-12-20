@@ -29,6 +29,44 @@ export DOMAIN_NAME=gcp.pivotaledu.io # ... or whatever you have registered
 export CONCOURSE_URL=concourse.${ENV_NAME}.${DOMAIN_NAME}
 ```
 
+Run the following `host` check if your environment can be reached from the internet
+```
+if host ${ENV_NAME}.${DOMAIN_NAME}; then echo SUCCESS; else echo FAIL; fi
+```
+
+If the above check yields **FAIL**, you should modify the parent DNS zone to include an "A" type Record Set entry specifying **ALL** the Google DNS servers.  For instance if your parent zone for `${DOMAIN_NAME}` is named `<PARENT_ZONE>` and is registered within `<PROJECT_ID>`, the required sequence of commands could look something like this:
+```
+gcloud dns --project=<PROJECT_ID> record-sets transaction start --zone=<PARENT_ZONE>
+
+gcloud dns --project=<PROJECT_ID> \
+  record-sets transaction add \
+    ns-cloud-a1.googledomains.com. \
+    ns-cloud-b1.googledomains.com. \
+    ns-cloud-c1.googledomains.com. \
+    ns-cloud-d1.googledomains.com. \
+    ns-cloud-e1.googledomains.com. \
+    ns-cloud-a2.googledomains.com. \
+    ns-cloud-b2.googledomains.com. \
+    ns-cloud-c2.googledomains.com. \
+    ns-cloud-d2.googledomains.com. \
+    ns-cloud-e2.googledomains.com. \
+    ns-cloud-a3.googledomains.com. \
+    ns-cloud-b3.googledomains.com. \
+    ns-cloud-c3.googledomains.com. \
+    ns-cloud-d3.googledomains.com. \
+    ns-cloud-e3.googledomains.com. \
+    ns-cloud-a4.googledomains.com. \
+    ns-cloud-b4.googledomains.com. \
+    ns-cloud-c4.googledomains.com. \
+    ns-cloud-d4.googledomains.com. \
+    ns-cloud-e4.googledomains.com. \
+  --name=${ENV_NAME}.${DOMAIN_NAME}. --ttl=60 --type=NS --zone=<PARENT_ZONE>
+
+gcloud dns --project=<PROJECT_ID> record-sets transaction execute --zone=<PARENT_ZONE>
+```
+
+**Note** you should not proceed until the above `host` check yields **SUCCESS**.
+
 BBL will generate some files, so create a home for this operation
 ```
 mkdir ${HOME}/bbl-concourse && cd ${HOME}/bbl-concourse
@@ -91,7 +129,7 @@ export CONCOURSE_PASSWORD=$(bosh interpolate concourse-vars.yml --path /basic_au
 echo ${CONCOURSE_USERNAME} ${CONCOURSE_PASSWORD}
 ```
 
-Configure the DNS entries
+Configure the DNS entries (**Note** the above `host` check must have already yielded `SUCCESS`)
 ```
 export EXT_IP=$(bbl lbs | grep "^Concourse LB:" | cut -d":" -f2 | xargs)
 gcloud dns managed-zones create ${ENV_NAME} --description= --dns-name=${ENV_NAME}.${DOMAIN_NAME}.
