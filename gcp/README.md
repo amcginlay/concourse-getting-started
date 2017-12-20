@@ -39,8 +39,8 @@ export REGION=$(gcloud config get-value compute/region)
 
 Increase GCP project quotas for your region as follows:
 
-Quota type               | Quota
------------------------- | -----
+Quota type               | Quota Amount
+------------------------ | ------------
 CPU                      | 100
 Persistent Disk SSD (GB) | 1000
 In-use IP addresses      | 32
