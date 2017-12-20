@@ -2,7 +2,6 @@
 ### What's the least I have to do to get Concourse running?
 
 Install bosh CLI v2, check version (min 2.0) and create an alias
-
 ```
 brew install cloudfoundry/tap/bosh-cli
 bosh2 --version
@@ -10,27 +9,30 @@ alias bosh='bosh2'
 ```
 
 Install Terraform and check version (min v0.11.1)
-
 ```
 brew install terraform
 terraform --version
 ```
 
 Install the BOSH Bootloader (BBL) and check version (min v5.7.3)
-
 ```
 brew install bbl
 bbl --version
 ```
 
-BBL will generate some files, so create a home for this operation
-
+Specify your domain name and environment
 ```
-mkdir $HOME/bbl-concourse && cd $HOME/bbl-concourse
+export ENV_NAME=<DISTINCT_INSTANCE_NAME>
+export DOMAIN_NAME=gcp.pivotaledu.io # ... or whatever you have registered
+export CONCOURSE_URL=concourse.${ENV_NAME}.${DOMAIN_NAME}
+```
+
+BBL will generate some files, so create a home for this operation
+```
+mkdir ${HOME}/bbl-concourse && cd ${HOME}/bbl-concourse
 ```
 
 Initialise `gcloud` to target your project and region
-
 ```
 gcloud init # and follow the prompts
 export PROJECT_ID=$(gcloud config get-value core/project)
@@ -77,15 +79,35 @@ wget https://github.com/evanfarrar/concourse-deployment/archive/v0.0.2.tar.gz &&
 bosh deploy -n concourse-deployment-0.0.2/concourse-deployment.yml \
   -d concourse \
   --vars-store concourse-vars.yml \
-  -v "system_domain=concourse.${DOMAIN}"
+  -v "system_domain=${CONCOURSE_URL}""
 ```
 
-Grab the Concourse username and password
+Grab the Concourse username and password - keep them to hand for use with the webpage
 ```
 export CONCOURSE_USERNAME=$(bosh interpolate concourse-vars.yml --path /basic_auth_username)
 export CONCOURSE_PASSWORD=$(bosh interpolate concourse-vars.yml --path /basic_auth_password)
-echo ${CONCOURSE_USERNAME} ${CONCOURSE_PASSWORD} # keep them to hand for use with the webpage
+echo ${CONCOURSE_USERNAME} ${CONCOURSE_PASSWORD}
 ```
 
+Configure the DNS entries
+```
+export EXT_IP=$(bbl lbs | grep "^Concourse LB:" | cut -d":" -f2 | xargs)
+gcloud dns managed-zones create ${ENV_NAME} --description= --dns-name=${ENV_NAME}.${DOMAIN_NAME}.
+gcloud dns record-sets transaction start --zone=${ENV_NAME}
+gcloud dns record-sets transaction add ${EXT_IP} \
+  --name=${CONCOURSE_URL}. --ttl=300 --type=A --zone=${ENV_NAME}
+gcloud dns record-sets transaction execute --zone=${ENV_NAME}
+```
+
+Wait for DNS lookup to yield an IP address - this may take a few mins
+
+```
+dig +short ${CONCOURSE_URL}
+```
+
+Navigate to Concourse in a browser and download the `fly` CLI utils
+```
+open http://${CONCOURSE_URL}
+```
 
 ### Task Complete!
