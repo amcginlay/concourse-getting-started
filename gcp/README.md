@@ -77,7 +77,7 @@ wget https://github.com/evanfarrar/concourse-deployment/archive/v0.0.2.tar.gz &&
 bosh deploy -n concourse-deployment-0.0.2/concourse-deployment.yml \
   -d concourse \
   --vars-store concourse-vars.yml \
-  -v 'system_domain=concourse.${DOMAIN}'
+  -v "system_domain=concourse.${DOMAIN}"
 ```
 
 Grab the Concourse username and password
