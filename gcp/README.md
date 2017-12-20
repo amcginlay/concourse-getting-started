@@ -37,6 +37,14 @@ export PROJECT_ID=$(gcloud config get-value core/project)
 export REGION=$(gcloud config get-value compute/region)
 ```
 
+Increase GCP project quotas for your region as follows:
+
+Quota type               | Second Header
+------------------------ | -------------
+CPU                      | 100
+Persistent Disk SSD (GB) | 1000
+In-use IP addresses      | 32
+
 Create a service account for BBL and capture the settings
 ```
 gcloud iam service-accounts create bbl-service-account \
@@ -66,10 +74,18 @@ bosh upload-stemcell light-bosh-stemcell-3468.15-google-kvm-ubuntu-trusty-go_age
 Deploy Concourse
 ```
 wget https://github.com/evanfarrar/concourse-deployment/archive/v0.0.2.tar.gz && tar xvf v0.0.2.tar.gz
-bosh deploy concourse-deployment-0.0.2/concourse-deployment.yml \
+bosh deploy -n concourse-deployment-0.0.2/concourse-deployment.yml \
   -d concourse \
   --vars-store concourse-vars.yml \
   -v 'system_domain=concourse.${DOMAIN}'
 ```
+
+Grab the Concourse username and password
+```
+export CONCOURSE_USERNAME=$(bosh interpolate concourse-vars.yml --path /basic_auth_username)
+export CONCOURSE_PASSWORD=$(bosh interpolate concourse-vars.yml --path /basic_auth_password)
+echo ${CONCOURSE_USERNAME} ${CONCOURSE_PASSWORD} # keep them to hand for use wqith the webpage
+```
+
 
 ### Task Complete!
