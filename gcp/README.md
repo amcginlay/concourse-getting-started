@@ -1,6 +1,8 @@
 # concourse-getting-started
 ### What's the least I have to do to get Concourse running?
 
+[Mac only]
+
 Install bosh CLI v2, check version (min 2.0) and create an alias
 ```
 brew install cloudfoundry/tap/bosh-cli
@@ -105,9 +107,10 @@ Wait for DNS lookup to yield an IP address - this may take a few mins
 dig +short ${CONCOURSE_URL}
 ```
 
-Navigate to Concourse in a browser and download the `fly` CLI utils
+Check the Concourse web UI and download the `fly` CLI utils
 ```
 open http://${CONCOURSE_URL}
+curl -L -k "https://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=darwin" -o /usr/local/bin/fly
 ```
 
 ### Task Complete!
