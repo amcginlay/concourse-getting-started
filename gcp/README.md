@@ -68,6 +68,11 @@ gcloud dns --project=<PROJECT_ID> \
 gcloud dns --project=<PROJECT_ID> record-sets transaction execute --zone=<PARENT_ZONE>
 ```
 
+Configure the DNS zone to complete the linkage (TODO need to test this change):
+```
+gcloud dns --project=<PROJECT_ID> managed-zones create ${ENV_NAME} --description= --dns-name=${ENV_NAME}.${DOMAIN_NAME}.
+```
+
 **Note** you should not proceed until the above `host` check yields **SUCCESS**.
 
 BBL will generate some files, so create a home for this operation
@@ -135,7 +140,6 @@ echo ${CONCOURSE_USERNAME} ${CONCOURSE_PASSWORD}
 Configure the DNS entries (**Note** the above `host` check must have already yielded `SUCCESS`)
 ```
 export EXT_IP=$(bbl lbs | grep "^Concourse LB:" | cut -d":" -f2 | xargs)
-gcloud dns managed-zones create ${ENV_NAME} --description= --dns-name=${ENV_NAME}.${DOMAIN_NAME}.
 gcloud dns record-sets transaction start --zone=${ENV_NAME}
 gcloud dns record-sets transaction add ${EXT_IP} \
   --name=${CONCOURSE_URL}. --ttl=300 --type=A --zone=${ENV_NAME}
