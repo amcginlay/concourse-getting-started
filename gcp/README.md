@@ -105,7 +105,7 @@ gcloud iam service-accounts keys create \
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
   --member="serviceAccount:bbl-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/editor"
-export BBL_GCP_SERVICE_ACCOUNT_KEY=$(cat $HOME/bbl/bbl-service-account.json)
+export BBL_GCP_SERVICE_ACCOUNT_KEY=$(cat $HOME/bbl-concourse/bbl-service-account.json)
 ```
 
 Execute BBL to build Jumpbox and BOSH director VM, then extract credentials
