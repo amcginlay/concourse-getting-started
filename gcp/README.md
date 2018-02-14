@@ -36,7 +36,7 @@ Run the following `host` check if your environment can be reached from the inter
 if host ${ENV_NAME}.${DOMAIN_NAME}; then echo SUCCESS; else echo FAIL; fi
 ```
 
-If the above check yields **FAIL**, you should modify the parent DNS zone to include an "A" type Record Set entry specifying **ALL** the Google DNS servers.  For instance if your parent zone for `${DOMAIN_NAME}` is named `<PARENT_ZONE>` and is registered within `<PROJECT_ID>`, the required sequence of commands could look something like this:
+If the above check yields **FAIL**, you should check to see that the parent Cloud DNS zone includes an "A" type Record Set entry specifying **ALL** the Google DNS servers.  If not, you should add one.  For instance if your parent Cloud DNS zone for `${DOMAIN_NAME}` is named `<PARENT_ZONE>` and is registered within `<PROJECT_ID>`, the required sequence of commands could look something like this:
 ```
 gcloud dns --project=<PROJECT_ID> record-sets transaction start --zone=<PARENT_ZONE>
 
