@@ -115,18 +115,36 @@ bbl up --iaas gcp --name my-concourse --gcp-region ${REGION} --lb-type concourse
 eval "$(bbl print-env)"
 ```
 
-Upload a stemcell
+Upload a stemcell and deploy Concourse
 ```
-bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3468.15
-```
+export external_url=http://$(bbl lbs |awk -F':' '{print $2}' |sed 's/ //')
 
-Deploy Concourse
-```
-wget https://github.com/evanfarrar/concourse-deployment/archive/v0.0.2.tar.gz && tar xvf v0.0.2.tar.gz
-bosh deploy -n concourse-deployment-0.0.2/concourse-deployment.yml \
-  -d concourse \
-  --vars-store concourse-vars.yml \
-  -v "system_domain=${CONCOURSE_URL}""
+bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent
+
+git clone https://github.com/concourse/concourse-deployment.git
+
+cd concourse-deployment/cluster
+cat > bbl_ops.yml << 'EOF'
+- type: replace
+  path: /instance_groups/name=web/vm_extensions?/-
+  value: lb
+- type: replace
+  path: /instance_groups/name=web/jobs/name=atc/properties/bind_port?
+  value: 80
+EOF
+
+bosh deploy -d concourse concourse.yml \
+  -l ../versions.yml \
+  --vars-store cluster-creds.yml \
+  -o operations/no-auth.yml \
+  -o bbl_ops.yml \
+  --var network_name=default \
+  --var external_url=$external_url \
+  --var web_vm_type=default \
+  --var db_vm_type=default \
+  --var db_persistent_disk_type=10GB \
+  --var worker_vm_type=default \
+  --var deployment_name=concourse
 ```
 
 Grab the Concourse username and password - keep them to hand for use with the webpage
