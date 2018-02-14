@@ -117,8 +117,7 @@ eval "$(bbl print-env)"
 
 Upload a stemcell
 ```
-wget https://s3.amazonaws.com/bosh-gce-light-stemcells/light-bosh-stemcell-3468.15-google-kvm-ubuntu-trusty-go_agent.tgz
-bosh upload-stemcell light-bosh-stemcell-3468.15-google-kvm-ubuntu-trusty-go_agent.tgz
+bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3468.15
 ```
 
 Deploy Concourse
