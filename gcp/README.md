@@ -173,16 +173,9 @@ bosh deploy -d concourse concourse.yml \
   --var deployment_name=concourse
 ```
 
-Grab the Concourse username and password - keep them to hand for use with the webpage
-```
-cd ${HOME}/bbl-concourse
-export CONCOURSE_USERNAME=$(bosh interpolate concourse-vars.yml --path /basic_auth_username)
-export CONCOURSE_PASSWORD=$(bosh interpolate concourse-vars.yml --path /basic_auth_password)
-echo ${CONCOURSE_USERNAME} ${CONCOURSE_PASSWORD}
-```
-
 Configure the DNS entries (**Note** the above `host` check must have already yielded `SUCCESS`)
 ```
+cd ${HOME}/bbl-concourse
 export EXT_IP=$(bbl lbs | grep "^Concourse LB:" | cut -d":" -f2 | xargs)
 gcloud dns record-sets transaction start --zone=${ENV_NAME}
 gcloud dns record-sets transaction add ${EXT_IP} \
