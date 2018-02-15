@@ -17,7 +17,7 @@ sudo chmod +x /usr/local/bin/bosh
 curl https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip -o ${HOME}/terraform.zip
 sudo unzip ${HOME}/terraform.zip -d /usr/local/bin/
 
-sudo curl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6.1.1/bbl-v6.1.1_linux_x86-64 -o /usr/local/bin/bbl
+sudo curl -L https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6.1.1/bbl-v6.1.1_linux_x86-64 -o /usr/local/bin/bbl
 sudo chmod +x /usr/local/bin/bbl
 ```
 
