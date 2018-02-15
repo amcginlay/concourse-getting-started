@@ -9,7 +9,7 @@
 Install the GCP [gcloud](https://cloud.google.com/sdk/docs/quickstart-debian-ubuntu utility.
 
 ```
-unzip -v 2> /dev/null || sudo apt-get install unzip
+sudo apt-get install unzip make ruby
 
 sudo curl https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.48-linux-amd64 -o /usr/local/bin/bosh
 sudo chmod +x /usr/local/bin/bosh
