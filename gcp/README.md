@@ -12,7 +12,7 @@ Install the GCP [gcloud](https://cloud.google.com/sdk/docs/quickstart-debian-ubu
 unzip -v 2> /dev/null || sudo apt-get install unzip
 
 sudo curl https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.48-linux-amd64 -o /usr/local/bin/bosh
-sudo chmod +x /usr/local/bin/bash
+sudo chmod +x /usr/local/bin/bosh
 
 curl https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip -o ${HOME}/terraform.zip
 sudo unzip ${HOME}/terraform.zip -d /usr/local/bin/
