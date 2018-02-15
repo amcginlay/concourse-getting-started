@@ -1,7 +1,27 @@
 # concourse-getting-started
-### What's the least I have to do to get Concourse running?
 
-[Mac only]
+# What's the least I have to do to get Concourse running?
+
+## Install
+
+### Linux Install
+
+Install the GCP [gcloud](https://cloud.google.com/sdk/docs/quickstart-debian-ubuntu utility.
+
+```
+unzip -v 2> /dev/null || sudo apt-get install unzip
+
+sudo curl https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.48-linux-amd64 -o /usr/local/bin/bosh
+sudo chmod +x /usr/local/bin/bash
+
+curl https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip -o ${HOME}/terraform.zip
+sudo unzip ${HOME}/terraform.zip -d /usr/local/bin/
+
+sudo curl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6.1.1/bbl-v6.1.1_linux_x86-64 -o /usr/local/bin/bbl
+sudo chmod +x /usr/local/bin/bbl
+```
+
+### Mac Install
 
 Install the GCP [gcloud](https://cloud.google.com/sdk/docs/quickstart-mac-os-x) utility.
 
@@ -23,6 +43,8 @@ Install the BOSH Bootloader (BBL) and check version (min v5.7.3)
 brew install bbl
 bbl --version
 ```
+
+## Ready to go ...
 
 Specify your domain name and environment
 ```
