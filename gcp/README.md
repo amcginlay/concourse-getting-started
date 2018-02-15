@@ -197,7 +197,9 @@ curl -L "http://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=darwin" -o /usr/
 
 Log-in via the `fly` CLI
 ```
-fly -t concourse login -c http://${CONCOURSE_URL}/ -u ${CONCOURSE_USERNAME} -p ${CONCOURSE_PASSWORD}
+fly -t concourse login -c http://${CONCOURSE_URL}/
 ```
+
+Now follow the [IaaS independent instructions](../shared/README.md) to create your first pipeline.
 
 ### Task Complete!
