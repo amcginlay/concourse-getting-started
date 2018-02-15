@@ -46,11 +46,12 @@ bbl --version
 
 ## Ready to go ...
 
-Specify your domain name and environment
+Specify your DOMAIN_NAME, CONCOURSE_URL and PROJECT_ID
 ```
 export ENV_NAME=<DISTINCT_INSTANCE_NAME>
 export DOMAIN_NAME=gcp.pivotaledu.io # ... or whatever you have registered
 export CONCOURSE_URL=concourse.${ENV_NAME}.${DOMAIN_NAME}
+export PROJECT_ID=$(gcloud config get-value core/project)
 ```
 
 Run the following `host` check if your environment can be reached from the internet
@@ -58,11 +59,14 @@ Run the following `host` check if your environment can be reached from the inter
 if host ${ENV_NAME}.${DOMAIN_NAME}; then echo SUCCESS; else echo FAIL; fi
 ```
 
-If the above check yields **FAIL**, you should check to see that the parent Cloud DNS zone includes an "A" type Record Set entry specifying **ALL** the Google DNS servers.  If not, you should add one.  For instance if your parent Cloud DNS zone for `${DOMAIN_NAME}` is named `<PARENT_ZONE>` and is registered within `<PROJECT_ID>`, the required sequence of commands could look something like this:
+If the above command yields **FAIL**, you should check to see that the hosted zone (Cloud DNS) for `${DOMAIN_NAME}` includes an "A" type Record Set for `${ENV_NAME}.${DOMAIN_NAME}` which specifies **ALL** the Google DNS servers.  If not, you should add one.  Assuming all DNS configuration is done in GCP, the required sequence of commands could look something like this:
 ```
-gcloud dns --project=<PROJECT_ID> record-sets transaction start --zone=<PARENT_ZONE>
+DOMAIN_NAME_ZONE=<CLOUD DNS ZONE for DOMAIN_NAME>
+CONFIG_PROJECT_ID=<HOST PROJECT ID OF DOMAIN_NAME_ZONE>
 
-gcloud dns --project=<PROJECT_ID> \
+gcloud dns --project=${CONFIG_PROJECT_ID} record-sets transaction start --zone=${DOMAIN_NAME_ZONE}
+
+gcloud dns --project=${CONFIG_PROJECT_ID} \
   record-sets transaction add \
   ns-cloud-a1.googledomains.com. \
   ns-cloud-b1.googledomains.com. \
@@ -85,14 +89,14 @@ gcloud dns --project=<PROJECT_ID> \
   ns-cloud-d4.googledomains.com. \
   ns-cloud-e4.googledomains.com. \
   --name=${ENV_NAME}.${DOMAIN_NAME}. \
-  --ttl=60 --type=NS --zone=<PARENT_ZONE>
+  --ttl=60 --type=NS --zone=${DOMAIN_NAME_ZONE}
 
-gcloud dns --project=<PROJECT_ID> record-sets transaction execute --zone=<PARENT_ZONE>
+gcloud dns --project=${CONFIG_PROJECT_ID} record-sets transaction execute --zone=${DOMAIN_NAME_ZONE}
 ```
 
-Configure the DNS zone to complete the linkage (TODO need to test this change):
+Configure the DNS zone in your target project to complete the linkage:
 ```
-gcloud dns --project=<PROJECT_ID> managed-zones create ${ENV_NAME} --description= --dns-name=${ENV_NAME}.${DOMAIN_NAME}.
+gcloud dns --project=${PROJECT_ID} managed-zones create $(echo ${ENV_NAME}.${DOMAIN_NAME} | tr '.' '-') --description= --dns-name=${ENV_NAME}.${DOMAIN_NAME}
 ```
 
 **Note** you should not proceed until the above `host` check yields **SUCCESS**.
