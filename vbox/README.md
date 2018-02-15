@@ -131,7 +131,7 @@ fly -t concourse sync
 
 Fork the sample app at [https://github.com/amcginlay/concourse-sample-app](https://github.com/amcginlay/concourse-sample-app).
 
-![Fork Me](forkme.png "Fork Me")
+![Fork Me](../forkme.png "Fork Me")
 
 Grab your forked sample app which will help us complete this exercise.
 
