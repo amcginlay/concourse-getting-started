@@ -1,12 +1,12 @@
 # concourse-getting-started
 
-# What's the least I have to do to get Concourse running?
+# What's the absolute minimum I have to do to get Concourse running on GCP?
 
 ## Install
 
 ### Linux Install
 
-Install the GCP [gcloud](https://cloud.google.com/sdk/docs/quickstart-debian-ubuntu utility.
+These instructions assume you're SSH'd into an Ubuntu jumpbox in your target GCP project as the `ubuntu` user.  GCP Ubuntu installs _should_ have the GCP `gcloud` utility included as standard.
 
 ```
 sudo apt-get install unzip make ruby

@@ -1,5 +1,5 @@
 # concourse-getting-started
-### What's the least I have to do to get Concourse running?
+### # What's the absolute minimum I have to do to get Concourse running on VirtualBox?
 
 Download VirtualBox and check version (min 5.1)
 
