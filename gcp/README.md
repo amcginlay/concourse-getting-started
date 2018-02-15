@@ -130,10 +130,14 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
 export BBL_GCP_SERVICE_ACCOUNT_KEY=$(cat $HOME/bbl-concourse/bbl-service-account.json)
 ```
 
-Execute BBL to build Jumpbox and BOSH director VM, then extract credentials
+Execute BBL to build Jumpbox and BOSH director VM
 ```
 bbl up --iaas gcp --name my-concourse --gcp-region ${REGION} --lb-type concourse
 # if next step fails due to "too many authentication failures" condsider adding "IdentitiesOnly=yes" to ${HOME}/.ssh/config
+```
+
+Extract the credentials
+```
 eval "$(bbl print-env)"
 ```
 
