@@ -47,8 +47,8 @@ bbl --version
 ### Windows Install
 ```
 1) Open Windows
-1) Throw laptop out of Windows
-1) Buy a computer :-)
+2) Throw laptop out of Windows
+3) Buy a computer :-)
 ```
 
 ## Ready to go ...
