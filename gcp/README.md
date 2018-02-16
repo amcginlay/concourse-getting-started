@@ -31,6 +31,11 @@ brew install cloudfoundry/tap/bosh-cli
 bosh2 --version
 alias bosh='bosh2'
 ```
+### Windows Install
+
+```
+Whatever ...
+```
 
 Install Terraform and check version (min v0.11.1)
 ```
