@@ -6,7 +6,7 @@
 
 ### Linux Install
 
-These instructions assume you're SSH'd into an Ubuntu jumpbox in your target GCP project as the `ubuntu` user.  GCP Ubuntu installs _should_ have the GCP `gcloud` utility included as standard.
+The Linux instructions assume you're already SSH'd into a standard GCP Ubuntu VM residing in your target GCP project.  You should be logged on as the `ubuntu` user.  GCP Ubuntu has the `gcloud` utility included as standard.
 
 ```
 sudo apt-get install unzip make ruby
