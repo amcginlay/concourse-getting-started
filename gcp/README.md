@@ -25,30 +25,29 @@ sudo chmod +x /usr/local/bin/bbl
 
 Install the GCP [gcloud](https://cloud.google.com/sdk/docs/quickstart-mac-os-x) utility.
 
-Install bosh CLI v2, check version (min 2.0) and create an alias
-```
-brew install cloudfoundry/tap/bosh-cli
-brew install cloudfoundry/tap/bbl
-alias bosh='bosh2'
-bosh --version
-bbl --version
-```
-### Windows Install
-
-```
-Whatever ...
-```
-
 Install Terraform and check version (min v0.11.1)
 ```
 brew install terraform
 terraform --version
 ```
 
+Install bosh CLI v2, check version (min 2.0) and create an alias
+```
+brew install cloudfoundry/tap/bosh-cli
+alias bosh='bosh2' # or create a symbolic link (just as we transition from v1 to v2)
+bosh --version
+```
+
 Install the BOSH Bootloader (BBL) and check version (min v5.7.3)
 ```
-brew install bbl
+brew install cloudfoundry/tap/bbl
 bbl --version
+```
+
+### Windows Install
+
+```
+Whatever ...
 ```
 
 ## Ready to go ...
