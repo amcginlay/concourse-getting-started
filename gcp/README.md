@@ -102,7 +102,8 @@ gcloud dns --project=${CONFIG_PROJECT_ID} record-sets transaction execute --zone
 
 Configure the DNS zone in your target project to complete the linkage:
 ```
-gcloud dns --project=${PROJECT_ID} managed-zones create $(echo ${ENV_NAME}.${DOMAIN_NAME} | tr '.' '-') --description= --dns-name=${ENV_NAME}.${DOMAIN_NAME}
+gcloud dns --project=${PROJECT_ID} managed-zones create $(echo ${ENV_NAME}.${DOMAIN_NAME} | \
+  tr '.' '-') --description= --dns-name=${ENV_NAME}.${DOMAIN_NAME}
 ```
 
 **Note** you should not proceed until the above `host` check yields **SUCCESS**.
@@ -143,7 +144,8 @@ export BBL_GCP_SERVICE_ACCOUNT_KEY=$(cat $HOME/bbl-concourse/bbl-service-account
 Execute BBL to build Jumpbox and BOSH director VM
 ```
 bbl up --iaas gcp --name my-concourse --gcp-region ${REGION} --lb-type concourse
-# if next step fails due to "too many authentication failures" condsider adding "IdentitiesOnly=yes" to ${HOME}/.ssh/config
+# if next step fails due to "too many authentication failures" 
+# condsider adding "IdentitiesOnly=yes" to ${HOME}/.ssh/config
 ```
 
 Extract the credentials
@@ -183,7 +185,8 @@ bosh deploy -d concourse concourse.yml \
   --var deployment_name=concourse
 ```
 
-Configure the DNS entries (**Note** the above `host` check must have already yielded `SUCCESS`)
+Configure the DNS entries 
+(**Note** the above `host` check must have already yielded `SUCCESS`)
 ```
 cd ${HOME}/bbl-concourse
 export EXT_IP=$(bbl lbs | grep "^Concourse LB:" | cut -d":" -f2 | xargs)
@@ -202,7 +205,8 @@ dig +short ${CONCOURSE_URL}
 Check the Concourse web UI and download the `fly` CLI utils
 ```
 open http://${CONCOURSE_URL}
-curl -L "http://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=darwin" -o /usr/local/bin/fly
+curl -L "http://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=darwin" \
+  -o /usr/local/bin/fly
 ```
 
 Log-in via the `fly` CLI
