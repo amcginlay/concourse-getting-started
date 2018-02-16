@@ -55,25 +55,34 @@ bbl --version
 
 Specify your DOMAIN_NAME, CONCOURSE_URL and PROJECT_ID
 ```
-export ENV_NAME=<DISTINCT_INSTANCE_NAME>
-export DOMAIN_NAME=gcp.pivotaledu.io # ... or whatever you have registered
-export CONCOURSE_URL=concourse.${ENV_NAME}.${DOMAIN_NAME}
-export PROJECT_ID=$(gcloud config get-value core/project)
+CC_DOMAIN_NAME=gcp.pivotaledu.io # ... or whatever you have registered for your group
+CC_SUBDOMAIN_NAME=cls99env99 # ... or some ID for your environment within DOMAIN_NAME
+CC_FQDN=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
+CC_URL=concourse.${FQDN}
+CC_PROJECT_ID=$(gcloud config get-value core/project)
+```
+
+Check these variables look as you would expect:
+```
+set | grep '^CC_'
 ```
 
 Run the following `host` check if your environment can be reached from the internet
 ```
-if host ${ENV_NAME}.${DOMAIN_NAME}; then echo SUCCESS; else echo FAIL; fi
+if host ${CC_FQDN}; then echo SUCCESS; else echo FAIL; fi
 ```
 
-If the above command yields **FAIL**, you should check to see that the hosted zone (Cloud DNS) for `${DOMAIN_NAME}` includes an "A" type Record Set for `${ENV_NAME}.${DOMAIN_NAME}` which specifies **ALL** the Google DNS servers.  If not, you should add one.  Assuming all DNS configuration is done in GCP, the required sequence of commands could look something like this:
+If the above command yields **FAIL**, you should first check to see that the hosted zone (Cloud DNS) for `${DOMAIN_NAME}` includes an "A" type Record Set for `${FQDN}` which specifies **ALL** the Google DNS servers.  If not, you should add one.  Assuming your DNS configuration is done in GCP, the required sequence of commands could look something like this:
 ```
-DOMAIN_NAME_ZONE=<CLOUD DNS ZONE for DOMAIN_NAME>
-CONFIG_PROJECT_ID=<HOST PROJECT ID OF DOMAIN_NAME_ZONE>
+# Specify the Cloud DNS Zone which manages CC_DOMAIN_NAME
+CC_DOMAIN_NAME_ZONE=$(echo ${CC_DOMAIN_NAME} | tr '.' '-')        # <--- for example
 
-gcloud dns --project=${CONFIG_PROJECT_ID} record-sets transaction start --zone=${DOMAIN_NAME_ZONE}
+# Specify the Project ID whhere CC_DOMAIN_NAME_ZONE is maintained
+CC_CONFIG_PROJECT_ID=cso-education-shared                         # <--- for example
 
-gcloud dns --project=${CONFIG_PROJECT_ID} \
+gcloud dns --project=${CC_CONFIG_PROJECT_ID} record-sets transaction start --zone=${CC_DOMAIN_NAME_ZONE}
+
+gcloud dns --project=${CC_CONFIG_PROJECT_ID} \
   record-sets transaction add \
   ns-cloud-a1.googledomains.com. \
   ns-cloud-b1.googledomains.com. \
@@ -95,16 +104,16 @@ gcloud dns --project=${CONFIG_PROJECT_ID} \
   ns-cloud-c4.googledomains.com. \
   ns-cloud-d4.googledomains.com. \
   ns-cloud-e4.googledomains.com. \
-  --name=${ENV_NAME}.${DOMAIN_NAME}. \
-  --ttl=60 --type=NS --zone=${DOMAIN_NAME_ZONE}
+  --name=${CC_FQDN} \
+  --ttl=60 --type=NS --zone=${CC_DOMAIN_NAME_ZONE}
 
-gcloud dns --project=${CONFIG_PROJECT_ID} record-sets transaction execute --zone=${DOMAIN_NAME_ZONE}
+gcloud dns --project=${CC_CONFIG_PROJECT_ID} record-sets transaction execute --zone=${CC_DOMAIN_NAME_ZONE}
 ```
 
 Configure the DNS zone in your target project to complete the linkage:
 ```
-gcloud dns --project=${PROJECT_ID} managed-zones create $(echo ${ENV_NAME}.${DOMAIN_NAME} | \
-  tr '.' '-') --description= --dns-name=${ENV_NAME}.${DOMAIN_NAME}
+gcloud dns --project=${CC_PROJECT_ID} managed-zones create $(echo ${CC_FQDN} | \
+  tr '.' '-') --description= --dns-name=${CC_FQDN}
 ```
 
 **Note** you should not proceed until the above `host` check yields **SUCCESS**.
@@ -191,10 +200,10 @@ Configure the DNS entries
 ```
 cd ${HOME}/bbl-concourse
 export EXT_IP=$(bbl lbs | grep "^Concourse LB:" | cut -d":" -f2 | xargs)
-gcloud dns record-sets transaction start --zone=${ENV_NAME}
+gcloud dns record-sets transaction start --zone=${SUBDOMAIN_NAME}
 gcloud dns record-sets transaction add ${EXT_IP} \
-  --name=${CONCOURSE_URL}. --ttl=300 --type=A --zone=${ENV_NAME}
-gcloud dns record-sets transaction execute --zone=${ENV_NAME}
+  --name=${CONCOURSE_URL}. --ttl=300 --type=A --zone=${SUBDOMAIN_NAME}
+gcloud dns record-sets transaction execute --zone=${SUBDOMAIN_NAME}
 ```
 
 Wait for DNS lookup to yield an IP address - this may take a few mins
