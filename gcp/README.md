@@ -62,37 +62,39 @@ gcloud init
 
 ### Setup environment variables
 
-Specify your DOMAIN_NAME, SUBDOMAIN_NAME, FQDN, the intended route for Concourse and PROJECT_ID:
+Specify a bunch of variables:
 ```
 #########################################################################################
 # !!! YOU NEED TO MAKE VALUE CHANGES HERE !!!
 #########################################################################################
+
 CC_DOMAIN_NAME=gcp.pivotaledu.io # ... or whatever you have registered for your group
 CC_SUBDOMAIN_NAME=cls99env99     # ... or some ID for your environment within DOMAIN_NAME
 #########################################################################################
 
 CC_FQDN=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
 
-CC_APP_ROUTE=concourse.${CC_FQDN}
+CC_APP_ROUTE=concourse.${CC_FQDN} # <--- where we expect to locate our Concourse instance
+
 CC_PROJECT_ID=$(gcloud config get-value core/project)
 CC_REGION=$(gcloud config get-value compute/region)
 ```
 
-Check these variables look as you would expect:
+Check the above variables assignments look as you would expect:
 ```
 set | grep '^CC_'
 ```
 
 ### Configure DNS at domain level
 
-Run the following `host` check if your environment can be reached from the internet
+Run the following `host` check if your environment can be reached externally
 ```
 if host ${CC_FQDN}; then echo SUCCESS; else echo FAIL; fi
 ```
 
 If the above command yields **SUCCESS**, we're done configuring DNS for now and you should skip to the next section.
 
-If the above command yields **FAIL**, you should first check to see that the hosted zone (Cloud DNS) for `${DOMAIN_NAME}` includes an "A" type Record Set for `${FQDN}` which specifies **ALL** the Google DNS servers.  If not, you should add one.  Assuming your DNS configuration is done in GCP, the required sequence of commands could look something like this:
+If the above command yields **FAIL**, you should first check to see that the hosted zone (Cloud DNS) for `CC_DOMAIN_NAME` includes an "A" type Record Set for `CC_FQDN` which specifies **ALL** the Google DNS servers.  If not, you should add one.  Assuming your DNS configuration is done in GCP, the required sequence of commands could look something like this:
 ```
 #########################################################################################
 # !!! YOU NEED TO MAKE VALUE CHANGES HERE !!!
@@ -174,7 +176,7 @@ gcloud projects add-iam-policy-binding ${CC_PROJECT_ID} \
   --role="roles/editor"
 ```
 
-Export BBL_GCP_SERVICE_ACCOUNT_KEY and xecute BBL to build Jumpbox and BOSH director VM.  **Note** his also sets the BOSH Director's `cloud config`:
+Export BBL_GCP_SERVICE_ACCOUNT_KEY and execute BBL to build Jumpbox and BOSH director VM.  **Note** his also sets the BOSH Director's `cloud config`:
 ```
 export BBL_GCP_SERVICE_ACCOUNT_KEY=$(cat $HOME/bbl-concourse/bbl-service-account.json)
 bbl up --iaas gcp --name concourse --gcp-region ${CC_REGION} --lb-type concourse
@@ -191,7 +193,7 @@ eval "$(bbl print-env)" # <--- run the "bbl print-env" command in isolation to s
 
 Upload a stemcell:
 ```
-bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent
+bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3468.22 # (avoid 3541.4)
 ```
 
 Deploy Concourse:
