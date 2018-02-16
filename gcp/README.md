@@ -213,7 +213,7 @@ cat > ./bbl_ops.yml << 'EOF'
 EOF
 
 #OLD
-bosh deploy -d concourse concourse.yml \
+bosh deploy -n -d concourse concourse.yml \
   -l ../versions.yml \
   --vars-store ./cluster-creds.yml \
   -o ./operations/no-auth.yml \
