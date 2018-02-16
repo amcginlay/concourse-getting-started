@@ -234,17 +234,17 @@ gcloud dns --project=${CC_PROJECT_ID} record-sets transaction add ${CC_LB_IP} \
 gcloud dns --project=${CC_PROJECT_ID} record-sets transaction execute --zone=${CC_FQDN_ZONE}
 ```
 
-Check the application route then wait for DNS lookup to yield an IP address - this may take a few mins:
+Wait for DNS lookup to yield an IP address (this may take a few mins) then inspect the application route:
 ```
-echo ${CC_APP_ROUTE} <--- this is where you'll find the Concourse web UI in a browser
 dig +short ${CC_APP_ROUTE}
+echo ${CC_APP_ROUTE} <--- this is where you'll find the Concourse web UI in a browser
 ```
 
 Navigate to the Concourse web UI and download the `fly` CLI utils for the OS of your local machine.
 
 From your local machine, log-in via the `fly` CLI:
 ```
-fly -t concourse login -c http://${CONCOURSE_URL}/
+fly -t concourse login -c http://<CC_APP_ROUTE>
 ```
 
 Now follow the [IaaS independent instructions](../shared/README.md) to create your first pipeline.
