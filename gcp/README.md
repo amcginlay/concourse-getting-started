@@ -28,8 +28,10 @@ Install the GCP [gcloud](https://cloud.google.com/sdk/docs/quickstart-mac-os-x) 
 Install bosh CLI v2, check version (min 2.0) and create an alias
 ```
 brew install cloudfoundry/tap/bosh-cli
-bosh2 --version
+brew install cloudfoundry/tap/bbl
 alias bosh='bosh2'
+bosh --version
+bbl --version
 ```
 ### Windows Install
 
