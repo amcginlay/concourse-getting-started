@@ -45,9 +45,10 @@ bbl --version
 ```
 
 ### Windows Install
-
 ```
-Whatever ...
+1) Open Windows
+1) Throw laptop out of Windows
+1) Buy a computer :-)
 ```
 
 ## Ready to go ...
