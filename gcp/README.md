@@ -34,7 +34,7 @@ terraform --version
 Install bosh CLI v2, check version (min 2.0) and create an alias
 ```
 brew install cloudfoundry/tap/bosh-cli
-alias bosh='bosh2' # or create a symbolic link (just as we transition from v1 to v2)
+alias bosh='bosh2' # or create a symbolic link on the PATH (just as we transition from v1 to v2)
 bosh --version
 ```
 
