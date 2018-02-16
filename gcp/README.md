@@ -89,6 +89,8 @@ Run the following `host` check if your environment can be reached from the inter
 if host ${CC_FQDN}; then echo SUCCESS; else echo FAIL; fi
 ```
 
+If the above command yields **SUCCESS**, we're done configuring DNS for now and you should skip to the next section.
+
 If the above command yields **FAIL**, you should first check to see that the hosted zone (Cloud DNS) for `${DOMAIN_NAME}` includes an "A" type Record Set for `${FQDN}` which specifies **ALL** the Google DNS servers.  If not, you should add one.  Assuming your DNS configuration is done in GCP, the required sequence of commands could look something like this:
 ```
 #########################################################################################
