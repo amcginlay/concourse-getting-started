@@ -62,7 +62,7 @@ gcloud init
 
 ### Setup environment variables
 
-Specify your DOMAIN_NAME, SUBDOMAIN_NAME, FQDN, the intended URL for Concourse and PROJECT_ID:
+Specify your DOMAIN_NAME, SUBDOMAIN_NAME, FQDN, the intended route for Concourse and PROJECT_ID:
 ```
 #########################################################################################
 # !!! YOU NEED TO MAKE VALUE CHANGES HERE !!!
@@ -72,7 +72,8 @@ CC_SUBDOMAIN_NAME=cls99env99     # ... or some ID for your environment within DO
 #########################################################################################
 
 CC_FQDN=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
-CC_URL=concourse.${CC_FQDN}
+
+CC_APP_ROUTE=concourse.${CC_FQDN}
 CC_PROJECT_ID=$(gcloud config get-value core/project)
 CC_REGION=$(gcloud config get-value compute/region)
 ```
@@ -82,7 +83,7 @@ Check these variables look as you would expect:
 set | grep '^CC_'
 ```
 
-### Configure DNS
+### Configure DNS at domain level
 
 Run the following `host` check if your environment can be reached from the internet
 ```
@@ -96,8 +97,9 @@ If the above command yields **FAIL**, you should first check to see that the hos
 #########################################################################################
 # !!! YOU NEED TO MAKE VALUE CHANGES HERE !!!
 #########################################################################################
-# Specify the Cloud DNS Zone which manages CC_DOMAIN_NAME
+# Specify the Cloud DNS Zone which manages CC_DOMAIN_NAME and CC_FQDN
 CC_DOMAIN_NAME_ZONE=$(echo ${CC_DOMAIN_NAME} | tr '.' '-')        # <--- for example
+CC_FQDN_ZONE=$(echo ${CC_FQDN} | tr '.' '-')                      # <--- for example
 
 # Specify the Project ID whhere CC_DOMAIN_NAME_ZONE is maintained
 CC_CONFIG_PROJECT_ID=cso-education-shared                         # <--- for example
@@ -135,8 +137,7 @@ gcloud dns --project=${CC_CONFIG_PROJECT_ID} record-sets transaction execute --z
 
 Configure the DNS zone in your target project to complete the linkage:
 ```
-gcloud dns --project=${CC_PROJECT_ID} managed-zones create $(echo ${CC_FQDN} | \
-  tr '.' '-') --description= --dns-name=${CC_FQDN}
+gcloud dns --project=${CC_PROJECT_ID} managed-zones create ${CC_FQDN_ZONE} --description= --dns-name=${CC_FQDN}
 ```
 
 You should not proceed until the `host` check (repeated below) yields **SUCCESS**
@@ -156,12 +157,12 @@ In-use IP addresses      | 32
 
 ### BOSH Bootloader (BBL)
 
-BBL will generate some files, so create a home for this operation
+BBL will generate some files, so create a home for this operation and move there:
 ```
 mkdir ${HOME}/bbl-concourse && cd ${HOME}/bbl-concourse
 ```
 
-Create a service account for BBL and export BBL_GCP_SERVICE_ACCOUNT_KEY (required by BBL)
+Create a service account for BBL
 ```
 gcloud iam service-accounts create bbl-service-account \
   --display-name "BBL service account"
@@ -171,12 +172,11 @@ gcloud iam service-accounts keys create \
 gcloud projects add-iam-policy-binding ${CC_PROJECT_ID} \
   --member="serviceAccount:bbl-service-account@${CC_PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/editor"
+```
 
+Export BBL_GCP_SERVICE_ACCOUNT_KEY and xecute BBL to build Jumpbox and BOSH director VM.  **Note** his also sets the BOSH Director's `cloud config`:
+```
 export BBL_GCP_SERVICE_ACCOUNT_KEY=$(cat $HOME/bbl-concourse/bbl-service-account.json)
-```
-
-Execute BBL to build Jumpbox and BOSH director VM
-```
 bbl up --iaas gcp --name concourse --gcp-region ${CC_REGION} --lb-type concourse
 # if next step fails due to "too many authentication failures" 
 # condsider adding "IdentitiesOnly=yes" to ${HOME}/.ssh/config
@@ -184,19 +184,26 @@ bbl up --iaas gcp --name concourse --gcp-region ${CC_REGION} --lb-type concourse
 
 Extract the credentials
 ```
-eval "$(bbl print-env)"
+eval "$(bbl print-env)" # <--- run the "bbl print-env" command in isolation to see what this represents
 ```
 
-Upload a stemcell and deploy Concourse
-```
-export external_url=http://$(bbl lbs |awk -F':' '{print $2}' |sed 's/ //')
+### Deploy Concourse
 
+Upload a stemcell:
+```
 bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent
+```
 
-git clone https://github.com/concourse/concourse-deployment.git
+Deploy Concourse:
+```
+cd ${HOME}/bbl-concourse/
+CC_LB_IP=$(bbl lbs | grep '^Concourse LB' | sed 's/ //g' | cut -d':' -f2)
 
-cd concourse-deployment/cluster
-cat > bbl_ops.yml << 'EOF'
+git clone https://github.com/concourse/concourse-deployment.git ${HOME}/bbl-concourse/concourse-deployment/
+cd ${HOME}/bbl-concourse/concourse-deployment/cluster/
+
+# TODO need this?
+cat > ./bbl_ops.yml << 'EOF'
 - type: replace
   path: /instance_groups/name=web/vm_extensions?/-
   value: lb
@@ -205,13 +212,27 @@ cat > bbl_ops.yml << 'EOF'
   value: 80
 EOF
 
+#OLD
 bosh deploy -d concourse concourse.yml \
   -l ../versions.yml \
-  --vars-store cluster-creds.yml \
-  -o operations/no-auth.yml \
-  -o bbl_ops.yml \
+  --vars-store ./cluster-creds.yml \
+  -o ./operations/no-auth.yml \
+  -o ./bbl_ops.yml \
   --var network_name=default \
-  --var external_url=$external_url \
+  --var external_url=http://${CC_LB_IP} \
+  --var web_vm_type=default \
+  --var db_vm_type=default \
+  --var db_persistent_disk_type=10GB \
+  --var worker_vm_type=default \
+  --var deployment_name=concourse
+
+#NEW
+bosh deploy -d concourse concourse.yml \
+  -l ../versions.yml \
+  --vars-store ./cluster-creds.yml \
+  -o ./operations/no-auth.yml \
+  --var network_name=default \
+  --var external_url=http://${CC_LB_IP} \
   --var web_vm_type=default \
   --var db_vm_type=default \
   --var db_persistent_disk_type=10GB \
@@ -219,31 +240,24 @@ bosh deploy -d concourse concourse.yml \
   --var deployment_name=concourse
 ```
 
-Configure the DNS entries 
-(**Note** the above `host` check must have already yielded `SUCCESS`)
-```
-cd ${HOME}/bbl-concourse
-export EXT_IP=$(bbl lbs | grep "^Concourse LB:" | cut -d":" -f2 | xargs)
-gcloud dns record-sets transaction start --zone=${SUBDOMAIN_NAME}
-gcloud dns record-sets transaction add ${EXT_IP} \
-  --name=${CONCOURSE_URL}. --ttl=300 --type=A --zone=${SUBDOMAIN_NAME}
-gcloud dns record-sets transaction execute --zone=${SUBDOMAIN_NAME}
-```
-
-Wait for DNS lookup to yield an IP address - this may take a few mins
+### Finalise the DNS at sub-domain level (TODO why wait for bosh deploy before doing this?)
 
 ```
-dig +short ${CONCOURSE_URL}
+gcloud dns --project=${CC_PROJECT_ID} record-sets transaction start --zone=${CC_FQDN_ZONE}
+gcloud dns --project=${CC_PROJECT_ID} record-sets transaction add ${CC_LB_IP} \
+  --name=${CC_APP_ROUTE}. --ttl=60 --type=A --zone=${CC_FQDN_ZONE}
+gcloud dns --project=${CC_PROJECT_ID} record-sets transaction execute --zone=${CC_FQDN_ZONE}
 ```
 
-Check the Concourse web UI and download the `fly` CLI utils
+Check the application route then wait for DNS lookup to yield an IP address - this may take a few mins:
 ```
-open http://${CONCOURSE_URL}
-curl -L "http://${CONCOURSE_URL}/api/v1/cli?arch=amd64&platform=darwin" \
-  -o /usr/local/bin/fly
+echo ${CC_APP_ROUTE} <--- this is where you'll find the Concourse web UI in a browser
+dig +short ${CC_APP_ROUTE}
 ```
 
-Log-in via the `fly` CLI
+Navigate to the Concourse web UI and download the `fly` CLI utils for the OS of your local machine.
+
+From your local machine, log-in via the `fly` CLI:
 ```
 fly -t concourse login -c http://${CONCOURSE_URL}/
 ```
