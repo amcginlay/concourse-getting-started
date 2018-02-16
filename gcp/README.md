@@ -202,7 +202,6 @@ CC_LB_IP=$(bbl lbs | grep '^Concourse LB' | sed 's/ //g' | cut -d':' -f2)
 git clone https://github.com/concourse/concourse-deployment.git ${HOME}/bbl-concourse/concourse-deployment/
 cd ${HOME}/bbl-concourse/concourse-deployment/cluster/
 
-# TODO need this?
 cat > ./bbl_ops.yml << 'EOF'
 - type: replace
   path: /instance_groups/name=web/vm_extensions?/-
@@ -212,7 +211,6 @@ cat > ./bbl_ops.yml << 'EOF'
   value: 80
 EOF
 
-#OLD
 bosh deploy -n -d concourse concourse.yml \
   -l ../versions.yml \
   --vars-store ./cluster-creds.yml \
@@ -225,20 +223,6 @@ bosh deploy -n -d concourse concourse.yml \
   --var db_persistent_disk_type=10GB \
   --var worker_vm_type=default \
   --var deployment_name=concourse
-
-#NEW
-bosh deploy -d concourse concourse.yml \
-  -l ../versions.yml \
-  --vars-store ./cluster-creds.yml \
-  -o ./operations/no-auth.yml \
-  --var network_name=default \
-  --var external_url=http://${CC_LB_IP} \
-  --var web_vm_type=default \
-  --var db_vm_type=default \
-  --var db_persistent_disk_type=10GB \
-  --var worker_vm_type=default \
-  --var deployment_name=concourse
-```
 
 ### Finalise the DNS at sub-domain level (TODO why wait for bosh deploy before doing this?)
 
