@@ -11,14 +11,14 @@ These instructions assume you're SSH'd into an Ubuntu jumpbox in your target GCP
 ```
 sudo apt-get install unzip make ruby
 
-sudo curl https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.48-linux-amd64 -o /usr/local/bin/bosh
-sudo chmod +x /usr/local/bin/bosh
+sudo curl https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.48-linux-amd64 \
+  -o /usr/local/bin/bosh && sudo chmod +x /usr/local/bin/bosh
 
-curl https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip -o ${HOME}/terraform.zip
-sudo unzip ${HOME}/terraform.zip -d /usr/local/bin/
+curl https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip \
+  -o ${HOME}/terraform.zip && sudo unzip ${HOME}/terraform.zip -d /usr/local/bin/
 
-sudo curl -L https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6.1.1/bbl-v6.1.1_linux_x86-64 -o /usr/local/bin/bbl
-sudo chmod +x /usr/local/bin/bbl
+sudo curl -L https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6.1.1/bbl-v6.1.1_linux_x86-64 \
+  -o /usr/local/bin/bbl && sudo chmod +x /usr/local/bin/bbl
 ```
 
 ### Mac Install
