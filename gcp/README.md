@@ -223,6 +223,7 @@ bosh deploy -n -d concourse concourse.yml \
   --var db_persistent_disk_type=10GB \
   --var worker_vm_type=default \
   --var deployment_name=concourse
+```
 
 ### Finalise the DNS at sub-domain level (TODO why wait for bosh deploy before doing this?)
 
