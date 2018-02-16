@@ -53,12 +53,22 @@ bbl --version
 
 ## Ready to go ...
 
-Specify your DOMAIN_NAME, CONCOURSE_URL and PROJECT_ID
+Initialise the `gcloud` CLI and follow the on-screen prompts.  If requested, you should log in with your Google Cloud Account, enter the verification code, select your target project ID (e.g. astral-chassis-194616) and an appropriate zone (e.g europe-west1-c):
 ```
+gcloud init
+```
+
+Specify your DOMAIN_NAME, SUBDOMAIN_NAME, FQDN, CONCOURSE_URL and PROJECT_ID:
+```
+#########################################################################################
+# !!! YOU NEED TO MAKE VALUE CHANGES HERE !!!
+#########################################################################################
 CC_DOMAIN_NAME=gcp.pivotaledu.io # ... or whatever you have registered for your group
-CC_SUBDOMAIN_NAME=cls99env99 # ... or some ID for your environment within DOMAIN_NAME
+CC_SUBDOMAIN_NAME=cls99env99     # ... or some ID for your environment within DOMAIN_NAME
+#########################################################################################
+
 CC_FQDN=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
-CC_URL=concourse.${FQDN}
+CC_URL=concourse.${CC_FQDN}
 CC_PROJECT_ID=$(gcloud config get-value core/project)
 ```
 
@@ -74,11 +84,15 @@ if host ${CC_FQDN}; then echo SUCCESS; else echo FAIL; fi
 
 If the above command yields **FAIL**, you should first check to see that the hosted zone (Cloud DNS) for `${DOMAIN_NAME}` includes an "A" type Record Set for `${FQDN}` which specifies **ALL** the Google DNS servers.  If not, you should add one.  Assuming your DNS configuration is done in GCP, the required sequence of commands could look something like this:
 ```
+#########################################################################################
+# !!! YOU NEED TO MAKE VALUE CHANGES HERE !!!
+#########################################################################################
 # Specify the Cloud DNS Zone which manages CC_DOMAIN_NAME
 CC_DOMAIN_NAME_ZONE=$(echo ${CC_DOMAIN_NAME} | tr '.' '-')        # <--- for example
 
 # Specify the Project ID whhere CC_DOMAIN_NAME_ZONE is maintained
 CC_CONFIG_PROJECT_ID=cso-education-shared                         # <--- for example
+#########################################################################################
 
 gcloud dns --project=${CC_CONFIG_PROJECT_ID} record-sets transaction start --zone=${CC_DOMAIN_NAME_ZONE}
 
