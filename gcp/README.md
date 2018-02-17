@@ -4,6 +4,10 @@
 
 ## Install
 
+### Google Cloud Shell
+
+**Note** BBL does not currently work with Google Cloud Shel, however it will work if you introduce a dedicated Ubuntu jumpbox on GCP and run these instructions from there.  Please follow the Linux Install instructions.
+
 ### Linux Install
 
 The Linux instructions assume you're already SSH'd into a standard GCP Ubuntu VM residing in your target GCP project.  You should be logged on as the `ubuntu` user.  GCP Ubuntu has the `gcloud` utility included as standard.
@@ -67,7 +71,6 @@ Specify a bunch of variables:
 #########################################################################################
 # !!! YOU NEED TO MAKE VALUE CHANGES HERE !!!
 #########################################################################################
-
 CC_DOMAIN_NAME=gcp.pivotaledu.io # ... or whatever you have registered for your group
 CC_SUBDOMAIN_NAME=cls99env99     # ... or some ID for your environment within DOMAIN_NAME
 #########################################################################################
@@ -89,7 +92,7 @@ set | grep '^CC_'
 
 Run the following `host` check if your environment can be reached externally
 ```
-if host ${CC_FQDN}; then echo SUCCESS; else echo FAIL; fi
+if host ${CC_FQDN} 2> /dev/null; then echo SUCCESS; else echo FAIL; fi
 ```
 
 If the above command yields **SUCCESS**, we're done configuring DNS for now and you should skip to the next section.
@@ -176,12 +179,12 @@ gcloud projects add-iam-policy-binding ${CC_PROJECT_ID} \
   --role="roles/editor"
 ```
 
-Export BBL_GCP_SERVICE_ACCOUNT_KEY and execute BBL to build Jumpbox and BOSH director VM.  **Note** his also sets the BOSH Director's `cloud config`:
+Export BBL_GCP_SERVICE_ACCOUNT_KEY and execute BBL to build Jumpbox and BOSH director VM.  **Note** this also sets the BOSH Director's `cloud config`:
 ```
 export BBL_GCP_SERVICE_ACCOUNT_KEY=$(cat $HOME/bbl-concourse/bbl-service-account.json)
-bbl up --iaas gcp --name concourse --gcp-region ${CC_REGION} --lb-type concourse
 # if next step fails due to "too many authentication failures" 
 # condsider adding "IdentitiesOnly=yes" to ${HOME}/.ssh/config
+bbl up --iaas gcp --name concourse --gcp-region ${CC_REGION} --lb-type concourse
 ```
 
 Extract the credentials
