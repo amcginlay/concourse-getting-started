@@ -83,7 +83,7 @@ CC_PROJECT_ID=$(gcloud config get-value core/project)
 CC_REGION=$(gcloud config get-value compute/region)
 ```
 
-Check the above variables assignments look as you would expect:
+Check the above variable assignments look as you would expect:
 ```
 set | grep '^CC_'
 ```
