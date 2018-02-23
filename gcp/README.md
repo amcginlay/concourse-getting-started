@@ -6,7 +6,7 @@
 
 ### Google Cloud Shell
 
-**Note** BBL does not currently work with Google Cloud Shel, however it will work if you introduce a dedicated Ubuntu jumpbox on GCP and run these instructions from there.  Please follow the Linux Install instructions.
+**Note** BBL does not currently work with Google Cloud Shell, however it will work if you introduce a dedicated Ubuntu jumpbox on GCP and run these instructions from there.  Please follow the Linux Install instructions.
 
 ### Linux Install
 
