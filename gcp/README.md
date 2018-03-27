@@ -242,7 +242,7 @@ gcloud dns --project=${CC_PROJECT_ID} record-sets transaction execute --zone=${C
 Wait for DNS lookup to yield an IP address (this may take a few mins) then inspect the application route:
 ```
 dig +short ${CC_APP_ROUTE}
-echo ${CC_APP_ROUTE} <--- this is where you'll find the Concourse web UI in a browser
+echo "http://${CC_APP_ROUTE}" <--- this is where you'll find the Concourse web UI in a browser
 ```
 
 Navigate to the Concourse web UI and download the `fly` CLI utils for the OS of your local machine.
