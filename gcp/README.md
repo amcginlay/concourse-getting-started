@@ -249,7 +249,7 @@ Navigate to the Concourse web UI and download the `fly` CLI utils for the OS of 
 
 From your local machine, log-in via the `fly` CLI:
 ```
-fly -t concourse login -c http://<CC_APP_ROUTE>
+fly -t concourse login -c http://<CC_APP_ROUTE> # NOTE http, not https !!!
 ```
 
 Now follow the [IaaS independent instructions](../shared/README.md) to create your first pipeline.
