@@ -181,10 +181,11 @@ gcloud projects add-iam-policy-binding ${CC_PROJECT_ID} \
 
 Export BBL_GCP_SERVICE_ACCOUNT_KEY and execute BBL to build Jumpbox and BOSH director VM.  **Note** this also sets the BOSH Director's `cloud config`:
 ```
-export BBL_GCP_SERVICE_ACCOUNT_KEY=$(cat $HOME/bbl-concourse/bbl-service-account.json)
 # if next step fails due to "too many authentication failures" 
 # condsider adding "IdentitiesOnly=yes" to ${HOME}/.ssh/config
 bbl up --iaas gcp --name concourse --gcp-region ${CC_REGION} --lb-type concourse
+bbl up --iaas gcp --name concourse --gcp-region ${CC_REGION} --lb-type concourse \
+  --gcp-service-account-key $HOME/bbl-concourse/bbl-service-account.json
 ```
 
 Extract the credentials
