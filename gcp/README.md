@@ -175,6 +175,7 @@ bosh deploy -n -d concourse concourse.yml \
 
 ```
 CC_FQDN_ZONE=$(echo ${CC_FQDN} | tr '.' '-')
+gcloud dns --project=${CC_PROJECT_ID} managed-zones create ${CC_FQDN_ZONE} --description= --dns-name=${CC_FQDN}
 gcloud dns --project=${CC_PROJECT_ID} record-sets transaction start --zone=${CC_FQDN_ZONE}
 gcloud dns --project=${CC_PROJECT_ID} record-sets transaction add ${CC_LB_IP} \
   --name=${CC_APP_ROUTE}. --ttl=60 --type=A --zone=${CC_FQDN_ZONE}
