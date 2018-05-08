@@ -171,7 +171,7 @@ bosh deploy -n -d concourse concourse.yml \
   --var deployment_name=concourse
 ```
 
-### Finalise the DNS at sub-domain level
+### Configure DNS
 
 ```
 gcloud dns --project=${CC_PROJECT_ID} record-sets transaction start --zone=${CC_FQDN_ZONE}
