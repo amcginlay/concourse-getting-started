@@ -171,6 +171,14 @@ bosh deploy -n -d concourse concourse.yml \
   --var deployment_name=concourse
 ```
 
+### Finalise the DNS at sub-domain level (TODO why wait for bosh deploy before doing this?)
+
+```
+gcloud dns --project=${CC_PROJECT_ID} record-sets transaction start --zone=${CC_FQDN_ZONE}
+gcloud dns --project=${CC_PROJECT_ID} record-sets transaction add ${CC_LB_IP} \
+  --name=${CC_APP_ROUTE}. --ttl=60 --type=A --zone=${CC_FQDN_ZONE}
+gcloud dns --project=${CC_PROJECT_ID} record-sets transaction execute --zone=${CC_FQDN_ZONE}
+```
 ### Navigate To Concourse And Download `fly`
 
 ```
