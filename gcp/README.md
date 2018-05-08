@@ -2,85 +2,83 @@
 
 # What's the absolute minimum I have to do to get Concourse running on GCP?
 
-## Install
+## Install A Jumpbox
 
-### Google Cloud Shell
-
-**Note** BBL does not currently work with Google Cloud Shell, however it will work if you introduce a dedicated Ubuntu jumpbox on GCP and run these instructions from there.  Please follow the Linux Install instructions.
-
-### Linux Install
-
-The Linux instructions assume you're already SSH'd into a standard GCP Ubuntu VM residing in your target GCP project.  You should be logged on as the `ubuntu` user.  GCP Ubuntu has the `gcloud` utility included as standard.
+## Set Up Variables On Local Machine
 
 ```
-sudo apt-get install unzip make ruby
-
-sudo curl https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.48-linux-amd64 \
-  -o /usr/local/bin/bosh && sudo chmod +x /usr/local/bin/bosh
-
-curl https://releases.hashicorp.com/terraform/0.11.3/terraform_0.11.3_linux_amd64.zip \
-  -o ${HOME}/terraform.zip && sudo unzip ${HOME}/terraform.zip -d /usr/local/bin/
-
-sudo curl -L https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6.1.1/bbl-v6.1.1_linux_x86-64 \
-  -o /usr/local/bin/bbl && sudo chmod +x /usr/local/bin/bbl
+GCP_USER=<YOUR_GCP_AUTHORIZED_EMAIL_ADDRESS>
+GCP_PROJECT_ID=<TARGET_GCP_PROJECT_ID>
+GCP_ZONE=<TARGET_GCP_ZONE>
 ```
 
-### Mac Install
+### Authenticate Local Machine
 
-Install the GCP [gcloud](https://cloud.google.com/sdk/docs/quickstart-mac-os-x) utility.
-
-Install Terraform and check version (min v0.11.1)
 ```
-brew install terraform
-terraform --version
+gcloud auth login ${GCP_USER}
 ```
 
-Install bosh CLI v2, check version (min 2.0) and create an alias
+### Create Jumpbox VM From Local Machine
+
 ```
-brew install cloudfoundry/tap/bosh-cli
-alias bosh='bosh2' # or create a symbolic link on the PATH (just as we transition from v1 to v2)
-bosh --version
+gcloud compute instances create "jumpbox" \
+  --image "ubuntu-1604-xenial-v20180418" \
+  --image-project "ubuntu-os-cloud" \
+  --boot-disk-size "200" \
+  --project "${GCP_PROJECT_ID}" \
+  --zone "${GCP_ZONE}"
 ```
 
-Install the BOSH Bootloader (BBL) and check version (min v5.7.3)
+### SSH To Jumpbox
+
 ```
-brew install cloudfoundry/tap/bbl
-bbl --version
+gcloud compute ssh ubuntu@jumpbox \
+  --project "${GCP_PROJECT_ID}" \
+  --zone "${GCP_ZONE}"
 ```
 
-### Windows Install
+### Install Essential Jumpbox Tools
+
 ```
-1) Open Windows
-2) Throw laptop out of Windows
-3) Buy a computer :-)
+sudo apt-get update && sudo apt-get --yes install unzip make ruby
+
+wget -O bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-3.0.1-linux-amd64 && \
+  chmod +x bosh && \
+  sudo mv bosh /usr/local/bin/
+
+wget -O terraform.zip https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip && \
+  unzip terraform.zip && \
+  sudo mv terraform /usr/local/bin
+
+wget -O bbl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6.6.7/bbl-v6.6.7_linux_x86-64 && \
+  chmod +x bbl && \
+  sudo mv bbl /usr/local/bin/
 ```
 
-## Ready to go ...
+### Authenticate Jumpbox
 
-### Initialise the `gcloud` CLI
+Follow the on-screen prompts as your execute the following:
 
-Initialise the `gcloud` CLI and follow the on-screen prompts.  If requested, you should log in with your Google Cloud Account, enter the verification code, select your target project ID (e.g. astral-chassis-194616) and an appropriate zone (e.g europe-west1-c):
 ```
-gcloud init
+CC_GCP_USER=fbloggs@gmail.com    # ... replace as appropriate
+gcloud auth login ${CC_GCP_USER} --quiet
 ```
 
-### Setup environment variables
+### Setup Jumpbox Variables
 
 Specify a bunch of variables:
 ```
 #########################################################################################
 # !!! YOU NEED TO MAKE VALUE CHANGES HERE !!!
 #########################################################################################
-CC_DOMAIN_NAME=gcp.pivotaledu.io # ... or whatever you have registered for your group
+CC_DOMAIN_NAME=pivotaledu.io     # ... or whatever you have registered for your group
 CC_SUBDOMAIN_NAME=cls99env99     # ... or some ID for your environment within DOMAIN_NAME
 #########################################################################################
 
 CC_FQDN=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
-
 CC_APP_ROUTE=concourse.${CC_FQDN} # <--- where we expect to locate our Concourse instance
-
 CC_PROJECT_ID=$(gcloud config get-value core/project)
-CC_REGION=$(gcloud config get-value compute/region)
+CC_REGION=us-central1
 ```
 
 Check the above variable assignments look as you would expect:
@@ -90,65 +88,7 @@ set | grep '^CC_'
 
 ### Configure DNS at domain level
 
-Run the following `host` check if your environment can be reached externally
-```
-if host ${CC_FQDN} 2> /dev/null; then echo SUCCESS; else echo FAIL; fi
-```
-
-If the above command yields **SUCCESS**, we're done configuring DNS for now and you should skip to the next section.
-
-If the above command yields **FAIL**, you should first check to see that the hosted zone (Cloud DNS) for `CC_DOMAIN_NAME` includes an "A" type Record Set for `CC_FQDN` which specifies **ALL** the Google DNS servers.  If not, you should add one.  Assuming your DNS configuration is done in GCP, the required sequence of commands could look something like this:
-```
-#########################################################################################
-# !!! YOU NEED TO MAKE VALUE CHANGES HERE !!!
-#########################################################################################
-# Specify the Cloud DNS Zone which manages CC_DOMAIN_NAME and CC_FQDN
-CC_DOMAIN_NAME_ZONE=$(echo ${CC_DOMAIN_NAME} | tr '.' '-')        # <--- for example
-CC_FQDN_ZONE=$(echo ${CC_FQDN} | tr '.' '-')                      # <--- for example
-
-# Specify the Project ID whhere CC_DOMAIN_NAME_ZONE is maintained
-CC_CONFIG_PROJECT_ID=cso-education-shared                         # <--- for example
-#########################################################################################
-
-gcloud dns --project=${CC_CONFIG_PROJECT_ID} record-sets transaction start --zone=${CC_DOMAIN_NAME_ZONE}
-
-gcloud dns --project=${CC_CONFIG_PROJECT_ID} \
-  record-sets transaction add \
-  ns-cloud-a1.googledomains.com. \
-  ns-cloud-b1.googledomains.com. \
-  ns-cloud-c1.googledomains.com. \
-  ns-cloud-d1.googledomains.com. \
-  ns-cloud-e1.googledomains.com. \
-  ns-cloud-a2.googledomains.com. \
-  ns-cloud-b2.googledomains.com. \
-  ns-cloud-c2.googledomains.com. \
-  ns-cloud-d2.googledomains.com. \
-  ns-cloud-e2.googledomains.com. \
-  ns-cloud-a3.googledomains.com. \
-  ns-cloud-b3.googledomains.com. \
-  ns-cloud-c3.googledomains.com. \
-  ns-cloud-d3.googledomains.com. \
-  ns-cloud-e3.googledomains.com. \
-  ns-cloud-a4.googledomains.com. \
-  ns-cloud-b4.googledomains.com. \
-  ns-cloud-c4.googledomains.com. \
-  ns-cloud-d4.googledomains.com. \
-  ns-cloud-e4.googledomains.com. \
-  --name=${CC_FQDN} \
-  --ttl=60 --type=NS --zone=${CC_DOMAIN_NAME_ZONE}
-
-gcloud dns --project=${CC_CONFIG_PROJECT_ID} record-sets transaction execute --zone=${CC_DOMAIN_NAME_ZONE}
-```
-
-Configure the DNS zone in your target project to complete the linkage:
-```
-gcloud dns --project=${CC_PROJECT_ID} managed-zones create ${CC_FQDN_ZONE} --description= --dns-name=${CC_FQDN}
-```
-
-You should not proceed until the `host` check (repeated below) yields **SUCCESS**
-```
-if host ${CC_FQDN}; then echo SUCCESS; else echo FAIL; fi
-```
+- TODO - re-write
 
 ### Increase GCP Quotas
 
@@ -164,7 +104,7 @@ In-use IP addresses      | 32
 
 BBL will generate some files, so create a home for this operation and move there:
 ```
-mkdir ${HOME}/bbl-concourse && cd ${HOME}/bbl-concourse
+mkdir ~/bbl-concourse && cd ~/bbl-concourse
 ```
 
 Create a service account for BBL
@@ -179,33 +119,34 @@ gcloud projects add-iam-policy-binding ${CC_PROJECT_ID} \
   --role="roles/editor"
 ```
 
-Export BBL_GCP_SERVICE_ACCOUNT_KEY and execute BBL to build Jumpbox and BOSH director VM.  **Note** this also sets the BOSH Director's `cloud config`:
+Export BBL_GCP_SERVICE_ACCOUNT_KEY and execute BBL to build Jumpbox and BOSH director VM.  
+**Note** this also sets the BOSH Director's `cloud config`:
 ```
 # if next step fails due to "too many authentication failures" 
-# condsider adding "IdentitiesOnly=yes" to ${HOME}/.ssh/config
+# condsider adding "IdentitiesOnly=yes" to ~/.ssh/config
 bbl up --iaas gcp --name concourse --gcp-region ${CC_REGION} --lb-type concourse \
   --gcp-service-account-key $HOME/bbl-concourse/bbl-service-account.json
 ```
 
 Extract the credentials
 ```
-eval "$(bbl print-env)" # <--- run the "bbl print-env" command in isolation to see what this represents
+eval "$(bbl print-env)"
 ```
 
 ### Deploy Concourse
 
 Upload a stemcell:
 ```
-bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3468.22 # (avoid 3541.4)
+bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent
 ```
 
 Deploy Concourse:
 ```
-cd ${HOME}/bbl-concourse/
+cd ~/bbl-concourse/
 CC_LB_IP=$(bbl lbs | grep '^Concourse LB' | sed 's/ //g' | cut -d':' -f2)
 
-git clone https://github.com/concourse/concourse-deployment.git ${HOME}/bbl-concourse/concourse-deployment/
-cd ${HOME}/bbl-concourse/concourse-deployment/cluster/
+git clone https://github.com/concourse/concourse-deployment.git ~/bbl-concourse/concourse-deployment/
+cd ~/bbl-concourse/concourse-deployment/cluster/
 
 cat > ./bbl_ops.yml << 'EOF'
 - type: replace
@@ -230,18 +171,9 @@ bosh deploy -n -d concourse concourse.yml \
   --var deployment_name=concourse
 ```
 
-### Finalise the DNS at sub-domain level (TODO why wait for bosh deploy before doing this?)
+### Navigate To Concourse And Download `fly`
 
 ```
-gcloud dns --project=${CC_PROJECT_ID} record-sets transaction start --zone=${CC_FQDN_ZONE}
-gcloud dns --project=${CC_PROJECT_ID} record-sets transaction add ${CC_LB_IP} \
-  --name=${CC_APP_ROUTE}. --ttl=60 --type=A --zone=${CC_FQDN_ZONE}
-gcloud dns --project=${CC_PROJECT_ID} record-sets transaction execute --zone=${CC_FQDN_ZONE}
-```
-
-Wait for DNS lookup to yield an IP address (this may take a few mins) then inspect the application route:
-```
-dig +short ${CC_APP_ROUTE}
 echo "http://${CC_APP_ROUTE}" <--- this is where you'll find the Concourse web UI in a browser
 ```
 
