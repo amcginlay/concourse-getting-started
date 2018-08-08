@@ -21,7 +21,7 @@ gcloud auth login ${GCP_USER}
 ### Create Jumpbox VM From Local Machine
 
 ```
-gcloud compute instances create "jumpbox" \
+gcloud compute instances create "concourse-jumpbox" \
   --image "ubuntu-1604-xenial-v20180418" \
   --image-project "ubuntu-os-cloud" \
   --boot-disk-size "200" \
@@ -32,7 +32,7 @@ gcloud compute instances create "jumpbox" \
 ### SSH To Jumpbox
 
 ```
-gcloud compute ssh ubuntu@jumpbox \
+gcloud compute ssh ubuntu@concourse-jumpbox \
   --project "${GCP_PROJECT_ID}" \
   --zone "${GCP_ZONE}"
 ```
@@ -40,9 +40,9 @@ gcloud compute ssh ubuntu@jumpbox \
 ### Install Essential Jumpbox Tools
 
 ```
-sudo apt-get update && sudo apt-get --yes install unzip make ruby
+sudo apt update && sudo apt --yes install unzip make ruby
 
-wget -O bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-3.0.1-linux-amd64 && \
+wget -O bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-5.1.1-linux-amd64 && \
   chmod +x bosh && \
   sudo mv bosh /usr/local/bin/
 
@@ -50,7 +50,7 @@ wget -O terraform.zip https://releases.hashicorp.com/terraform/0.11.7/terraform_
   unzip terraform.zip && \
   sudo mv terraform /usr/local/bin
 
-wget -O bbl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6.6.7/bbl-v6.6.7_linux_x86-64 && \
+wget -O bbl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6.9.0/bbl-v6.9.0_linux_x86-64 && \
   chmod +x bbl && \
   sudo mv bbl /usr/local/bin/
 ```
