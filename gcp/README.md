@@ -124,7 +124,11 @@ Export BBL_GCP_SERVICE_ACCOUNT_KEY and execute BBL to build Jumpbox and BOSH dir
 ```
 # if next step fails due to "too many authentication failures" 
 # condsider adding "IdentitiesOnly=yes" to ~/.ssh/config
-bbl up --iaas gcp --name concourse --gcp-region ${CC_REGION} --lb-type concourse \
+bbl up \
+  --name concourse \
+  --lb-type concourse \
+  --iaas gcp \
+  --gcp-region ${CC_REGION} \
   --gcp-service-account-key $HOME/bbl-concourse/bbl-service-account.json
 ```
 
