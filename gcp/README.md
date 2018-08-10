@@ -143,7 +143,6 @@ bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-g
 Deploy Concourse:
 ```
 cd ~/bbl-concourse/
-CC_LB_IP=$(bbl lbs | grep '^Concourse LB' | sed 's/ //g' | cut -d':' -f2)
 
 git clone https://github.com/concourse/concourse-deployment.git ~/bbl-concourse/concourse-deployment/
 cd ~/bbl-concourse/concourse-deployment/cluster/
@@ -163,7 +162,7 @@ bosh deploy -n -d concourse concourse.yml \
   -o ./operations/no-auth.yml \
   -o ./bbl_ops.yml \
   --var network_name=default \
-  --var external_url=http://${CC_LB_IP} \
+  --var external_url=http://$(bbl lbs | grep '^Concourse LB' | sed 's/ //g' | cut -d':' -f2) \
   --var web_vm_type=default \
   --var db_vm_type=default \
   --var db_persistent_disk_type=10GB \
