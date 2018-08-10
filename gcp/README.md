@@ -128,8 +128,9 @@ bbl up \
   --gcp-service-account-key $HOME/bbl-concourse/bbl-service-account.json
 ```
 
-Extract the credentials and authenticate the BOSH cli
+Extract the external URL and credentials:
 ```
+export external_url="https://$(bbl lbs | awk -F': ' '{print $2}')"
 eval "$(bbl print-env)"
 ```
 
@@ -142,17 +143,13 @@ bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-xenial-g
 
 Deploy Concourse:
 ```
-cd ~/bbl-concourse/
-
-CC_LP_IP="$(bbl lbs | awk -F': ' '{print $2}')"
-
 git clone https://github.com/concourse/concourse-deployment.git ~/bbl-concourse/concourse-deployment/
 cd ~/bbl-concourse/concourse-deployment/cluster/
 
 cat >secrets.yml <<EOL
 local_user:
   username: admin
-  password: adm1nPa$$w0rd
+  password: adm1npa$$w0rd
 EOL
 
 bosh deploy -d concourse concourse.yml \
@@ -160,14 +157,19 @@ bosh deploy -d concourse concourse.yml \
   -l secrets.yml \
   --vars-store cluster-creds.yml \
   -o operations/basic-auth.yml \
-  --var network_name=concourse \
-  --var web_ip=${CC_LP_IP} \
-  --var external_url=http://${CC_LP_IP} \
-  --var web_vm_type=concourse \
-  --var db_vm_type=concourse \
-  --var db_persistent_disk_type=100GB \
+  -o operations/privileged-http.yml \
+  -o operations/privileged-https.yml \
+  -o operations/tls.yml \
+  -o operations/web-network-extension.yml \
+  --var network_name=default \
+  --var external_url=$external_url \
+  --var web_vm_type=default \
+  --var db_vm_type=default \
+  --var db_persistent_disk_type=10GB \
   --var worker_vm_type=default \
-  --var deployment_name=concourse
+  --var deployment_name=concourse \
+  --var web_network_name=private \
+  --var web_network_vm_extension=lb
 ```
 
 ### Configure DNS
