@@ -9,7 +9,6 @@
 ```
 GCP_USER=<YOUR_GCP_AUTHORIZED_EMAIL_ADDRESS>
 GCP_PROJECT_ID=<TARGET_GCP_PROJECT_ID>
-GCP_ZONE=<TARGET_GCP_ZONE>
 ```
 
 ### Authenticate Local Machine
@@ -26,7 +25,7 @@ gcloud compute instances create "concourse-jumpbox" \
   --image-project "ubuntu-os-cloud" \
   --boot-disk-size "200" \
   --project "${GCP_PROJECT_ID}" \
-  --zone "${GCP_ZONE}"
+  --zone "us-central1-a"
 ```
 
 ### SSH To Jumpbox
@@ -34,7 +33,7 @@ gcloud compute instances create "concourse-jumpbox" \
 ```
 gcloud compute ssh ubuntu@concourse-jumpbox \
   --project "${GCP_PROJECT_ID}" \
-  --zone "${GCP_ZONE}"
+  --zone "us-central1-a"
 ```
 
 ### Install Essential Jumpbox Tools
@@ -112,10 +111,10 @@ Create a service account for BBL
 gcloud iam service-accounts create bbl-service-account \
   --display-name "BBL service account"
 gcloud iam service-accounts keys create \
-  --iam-account="bbl-service-account@${CC_PROJECT_ID}.iam.gserviceaccount.com" \
+  --iam-account="bbl-service-account@$(gcloud config get-value core/project).iam.gserviceaccount.com" \
   bbl-service-account.json
-gcloud projects add-iam-policy-binding ${CC_PROJECT_ID} \
-  --member="serviceAccount:bbl-service-account@${CC_PROJECT_ID}.iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding $(gcloud config get-value core/project) \
+  --member="serviceAccount:bbl-service-account@$(gcloud config get-value core/project).iam.gserviceaccount.com" \
   --role="roles/editor"
 ```
 
@@ -128,7 +127,7 @@ bbl up \
   --name concourse \
   --lb-type concourse \
   --iaas gcp \
-  --gcp-region ${CC_REGION} \
+  --gcp-region us-central1 \
   --gcp-service-account-key $HOME/bbl-concourse/bbl-service-account.json
 ```
 
@@ -179,11 +178,10 @@ bosh deploy -n -d concourse concourse.yml \
 
 ```
 CC_FQDN_ZONE=$(echo ${CC_FQDN} | tr '.' '-')
-gcloud dns --project=${CC_PROJECT_ID} managed-zones create ${CC_FQDN_ZONE} --description= --dns-name=${CC_FQDN}
-gcloud dns --project=${CC_PROJECT_ID} record-sets transaction start --zone=${CC_FQDN_ZONE}
-gcloud dns --project=${CC_PROJECT_ID} record-sets transaction add ${CC_LB_IP} \
-  --name=${CC_APP_ROUTE}. --ttl=60 --type=A --zone=${CC_FQDN_ZONE}
-gcloud dns --project=${CC_PROJECT_ID} record-sets transaction execute --zone=${CC_FQDN_ZONE}
+gcloud dns managed-zones create ${CC_FQDN_ZONE} --description= --dns-name=${CC_FQDN}
+gcloud dns record-sets transaction start --zone=${CC_FQDN_ZONE}
+gcloud dns record-sets transaction add ${CC_LB_IP} --name=${CC_APP_ROUTE}. --ttl=60 --type=A --zone=us-central1-a
+gcloud dns --project=${CC_PROJECT_ID} record-sets transaction execute --zone=us-central1-a
 ```
 ### Navigate To Concourse And Download `fly`
 
