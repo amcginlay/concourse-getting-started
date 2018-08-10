@@ -176,16 +176,19 @@ bosh deploy -d concourse concourse.yml \
 ### Configure DNS
 
 ```
-#CC_FQDN=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
-#CC_FQDN_ZONE=$(echo ${CC_FQDN} | tr '.' '-')
-
 CC_CLOUD_DNS_ZONE=concourse-${CC_SUBDOMAIN_NAME}-${CC_DOMAIN_NAME}
 CC_EXPANDED_DOMAIN_NAME=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
 
-gcloud dns managed-zones create ${CC_CLOUD_DNS_ZONE} --description= --dns-name=${CC_EXPANDED_DOMAIN_NAME}
+gcloud dns managed-zones create ${CC_CLOUD_DNS_ZONE} --dns-name=${CC_EXPANDED_DOMAIN_NAME}
+
 gcloud dns record-sets transaction start --zone=${CC_CLOUD_DNS_ZONE}
-gcloud dns record-sets transaction add ${CC_LB_IP} --name=concourse.${CC_EXPANDED_DOMAIN_NAME}. --ttl=60 --type=A --zone=${CC_CLOUD_DNS_ZONE}
-gcloud dns --project=$(gcloud config get-value core/project) record-sets transaction execute --zone=${CC_CLOUD_DNS_ZONE}
+
+  gcloud dns record-sets transaction \
+    add ${CC_LB_IP} \
+    --name=concourse.${CC_EXPANDED_DOMAIN_NAME}. \
+    --ttl=60 --type=A --zone=${CC_CLOUD_DNS_ZONE}
+
+gcloud dns record-sets transaction execute --zone=${CC_CLOUD_DNS_ZONE}
 ```
 
 ### Navigate To Concourse And Download `fly`
