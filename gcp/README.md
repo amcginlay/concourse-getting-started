@@ -180,7 +180,7 @@ CC_CLOUD_DNS_ZONE=concourse-${CC_SUBDOMAIN_NAME}-${CC_DOMAIN_NAME}
 
 gcloud dns managed-zones create ${CC_CLOUD_DNS_ZONE} \
   --dns-name=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} \
-  --description
+  --description=
 
 gcloud dns record-sets transaction start --zone=${CC_CLOUD_DNS_ZONE}
 
