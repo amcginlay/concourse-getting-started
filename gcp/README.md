@@ -65,7 +65,7 @@ gcloud auth login --quiet
 
 In the ubuntu home directory on your jumpbox, create a hidden file named `.env` to store variables, the values of which describe your specific environment. You should customize the `.env` file to suit your target environment before continuing.
 
-Take the template .env file below and substitute in the proper values for your GCP project:
+Take the template `.env` file below and substitute in the proper values for your GCP project:
 
 Specify a bunch of variables:
 ```
