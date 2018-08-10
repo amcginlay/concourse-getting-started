@@ -160,11 +160,11 @@ bosh deploy -d concourse concourse.yml \
   -l secrets.yml \
   --vars-store cluster-creds.yml \
   -o operations/basic-auth.yml \
-  --var network_name=default \
+  --var network_name=concourse \
   --var web_ip=${CC_LP_IP} \
   --var external_url=http://${CC_LP_IP} \
-  --var web_vm_type=default \
-  --var db_vm_type=default \
+  --var web_vm_type=concourse \
+  --var db_vm_type=concourse \
   --var db_persistent_disk_type=100GB \
   --var worker_vm_type=default \
   --var deployment_name=concourse
