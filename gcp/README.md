@@ -147,27 +147,30 @@ cd ~/bbl-concourse/
 git clone https://github.com/concourse/concourse-deployment.git ~/bbl-concourse/concourse-deployment/
 cd ~/bbl-concourse/concourse-deployment/cluster/
 
-cat > ./bbl_ops.yml <<-EOF
-- type: replace
-  path: /instance_groups/name=web/vm_extensions?/-
-  value: lb
-- type: replace
-  path: /instance_groups/name=web/jobs/name=atc/properties/bind_port?
-  value: 80
-EOF
+cat >secrets.yml <<EOL
+local_user:
+  username: admin
+  password: adm1nPa$$w0rd
+EOL
 
-bosh deploy -n -d concourse concourse.yml \
+bosh deploy -d concourse concourse.yml \
   -l ../versions.yml \
-  --vars-store ./cluster-creds.yml \
-  -o ./operations/no-auth.yml \
-  -o ./bbl_ops.yml \
+  -l secrets.yml \
+  --vars-store cluster-creds.yml \
+  -o operations/basic-auth.yml \
+  -o operations/privileged-http.yml \
+  -o operations/privileged-https.yml \
+  -o operations/tls.yml \
+  -o operations/web-network-extension.yml \
   --var network_name=default \
-  --var external_url=https://$(bbl lbs | awk -F': ' '{print $2}') \
+  --var external_url=$external_url \
   --var web_vm_type=default \
   --var db_vm_type=default \
-  --var db_persistent_disk_type=10GB \
+  --var db_persistent_disk_type=200GB \
   --var worker_vm_type=default \
-  --var deployment_name=concourse
+  --var deployment_name=concourse \
+  --var web_network_name=private \
+  --var web_network_vm_extension=lb
 ```
 
 ### Configure DNS
