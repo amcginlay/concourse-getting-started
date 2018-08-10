@@ -158,19 +158,13 @@ bosh deploy -d concourse concourse.yml \
   -l secrets.yml \
   --vars-store cluster-creds.yml \
   -o operations/basic-auth.yml \
-  -o operations/privileged-http.yml \
-  -o operations/privileged-https.yml \
-  -o operations/tls.yml \
-  -o operations/web-network-extension.yml \
   --var network_name=default \
-  --var external_url=https://$(bbl lbs | awk -F': ' '{print $2}') \
+  --var external_url=http://$(bbl lbs | awk -F': ' '{print $2}') \
   --var web_vm_type=default \
   --var db_vm_type=default \
   --var db_persistent_disk_type=100GB \
   --var worker_vm_type=default \
-  --var deployment_name=concourse \
-  --var web_network_name=private \
-  --var web_network_vm_extension=lb
+  --var deployment_name=concourse
 ```
 
 ### Configure DNS
