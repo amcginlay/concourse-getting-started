@@ -88,7 +88,7 @@ echo "source ~/.env" >> ~/.bashrc
 
 ### Increase GCP Quotas
 
-If necessary, increase GCP project quotas (`IAM & admin -> Quotas`) for the us-central1 region as follows:
+If necessary, increase GCP project quotas (`IAM & admin -> Quotas`) for the __us-central1__ region as follows:
 
 Quota type               | Quota Amount
 ------------------------ | ------------
