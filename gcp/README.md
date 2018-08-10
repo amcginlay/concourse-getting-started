@@ -209,7 +209,7 @@ Navigate to the Concourse web UI at CC_EXTERNAL_URL and download the `fly` CLI u
 
 From your local machine, log-in via the `fly` CLI:
 ```
-fly -t concourse login -c http://concourse.${CC_FQDN} # NOTE http, not https !!!
+fly -t concourse login -c http://concourse.${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} # NOTE http, not https !!!
 ```
 
 Now follow the [IaaS independent instructions](../shared/README.md) to create your first pipeline.
