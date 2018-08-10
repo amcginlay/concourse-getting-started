@@ -14,7 +14,7 @@ GCP_PROJECT_ID=<TARGET_GCP_PROJECT_ID>
 ### Authenticate Local Machine
 
 ```
-gcloud auth login ${GCP_USER}
+gcloud auth login
 ```
 
 ### Create Jumpbox VM From Local Machine
