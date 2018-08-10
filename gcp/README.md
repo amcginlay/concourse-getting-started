@@ -137,7 +137,7 @@ eval "$(bbl print-env)"
 
 Upload a stemcell:
 ```
-bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent
+bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-xenial-go_agent
 ```
 
 Deploy Concourse:
