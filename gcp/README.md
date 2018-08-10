@@ -71,6 +71,8 @@ Specify a bunch of variables:
 ```
 CC_DOMAIN_NAME=CHANGE_ME_DOMAIN_NAME                 # e.g. pivotaledu.io
 CC_SUBDOMAIN_NAME=CHANGE_ME_SUBDOMAIN_NAME           # e.g. cls99env66
+
+CC_EXTERNAL_URL=http://concourse.${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
 ```
 
 ### Persist Your Environment File
@@ -131,7 +133,6 @@ bbl up \
 Extract the external URL and credentials:
 ```
 CC_LB_IP=$(bbl lbs | awk -F': ' '{print $2}')
-export EXTERNAL_URL=http://$CC_LB_IP
 eval "$(bbl print-env)"
 ```
 
@@ -162,7 +163,7 @@ bosh deploy -d concourse concourse.yml \
   -o operations/privileged-https.yml \
   -o operations/web-network-extension.yml \
   --var network_name=default \
-  --var external_url=$EXTERNAL_URL \
+  --var external_url=$CC_EXTERNAL_URL \
   --var web_vm_type=default \
   --var db_vm_type=default \
   --var db_persistent_disk_type=100GB \
@@ -175,12 +176,16 @@ bosh deploy -d concourse concourse.yml \
 ### Configure DNS
 
 ```
-CC_FQDN=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
-CC_FQDN_ZONE=$(echo ${CC_FQDN} | tr '.' '-')
-gcloud dns managed-zones create ${CC_FQDN_ZONE} --description= --dns-name=${CC_FQDN}
-gcloud dns record-sets transaction start --zone=${CC_FQDN_ZONE}
-gcloud dns record-sets transaction add ${CC_LB_IP} --name=concourse.${CC_FQDN}. --ttl=60 --type=A --zone=${CC_FQDN_ZONE}
-gcloud dns --project=$(gcloud config get-value core/project) record-sets transaction execute --zone=${CC_FQDN_ZONE}
+#CC_FQDN=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
+#CC_FQDN_ZONE=$(echo ${CC_FQDN} | tr '.' '-')
+
+CC_CLOUD_DNS_ZONE=concourse-${CC_SUBDOMAIN_NAME}-${CC_DOMAIN_NAME}
+CC_EXPANDED_DOMAIN_NAME=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
+
+gcloud dns managed-zones create ${CC_CLOUD_DNS_ZONE} --description= --dns-name=${CC_EXPANDED_DOMAIN_NAME}
+gcloud dns record-sets transaction start --zone=${CC_CLOUD_DNS_ZONE}
+gcloud dns record-sets transaction add ${CC_LB_IP} --name=concourse.${CC_EXPANDED_DOMAIN_NAME}. --ttl=60 --type=A --zone=${CC_CLOUD_DNS_ZONE}
+gcloud dns --project=$(gcloud config get-value core/project) record-sets transaction execute --zone=${CC_CLOUD_DNS_ZONE}
 ```
 
 ### Navigate To Concourse And Download `fly`
