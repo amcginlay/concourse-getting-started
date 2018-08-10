@@ -67,7 +67,6 @@ In the ubuntu home directory on your jumpbox, create a hidden file named `.env` 
 
 Take the template `.env` file below and substitute in the proper values for your GCP project:
 
-Specify a bunch of variables:
 ```
 CC_DOMAIN_NAME=CHANGE_ME_DOMAIN_NAME                 # e.g. pivotaledu.io
 CC_SUBDOMAIN_NAME=CHANGE_ME_SUBDOMAIN_NAME           # e.g. cls99env66
@@ -192,11 +191,7 @@ gcloud dns record-sets transaction execute --zone=concourse
 
 ### Navigate To Concourse And Download `fly`
 
-```
-echo "http://concourse.${CC_FQDN}" <--- this is where you'll find the Concourse web UI in a browser
-```
-
-Navigate to the Concourse web UI and download the `fly` CLI utils for the OS of your local machine.
+Navigate to the Concourse web UI at CC_EXTERNAL_URL and download the `fly` CLI utils for the OS of your local machine.
 
 From your local machine, log-in via the `fly` CLI:
 ```
