@@ -150,7 +150,7 @@ cd ~/bbl-concourse/concourse-deployment/cluster/
 cat >secrets.yml <<EOL
 local_user:
   username: admin
-  password: adm1npa$$w0rd
+  password: adm1npa55w0rd
 EOL
 
 bosh deploy -d concourse concourse.yml \
