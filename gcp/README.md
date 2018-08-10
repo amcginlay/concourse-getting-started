@@ -144,7 +144,7 @@ Deploy Concourse:
 ```
 cd ~/bbl-concourse/
 
-CC_URL="https://$(bbl lbs | awk -F': ' '{print $2}')"
+CC_LP_IP="$(bbl lbs | awk -F': ' '{print $2}')"
 
 git clone https://github.com/concourse/concourse-deployment.git ~/bbl-concourse/concourse-deployment/
 cd ~/bbl-concourse/concourse-deployment/cluster/
@@ -161,7 +161,8 @@ bosh deploy -d concourse concourse.yml \
   --vars-store cluster-creds.yml \
   -o operations/basic-auth.yml \
   --var network_name=default \
-  --var external_url=${CC_URL} \
+  --var web_ip=${CC_LP_IP} \
+  --var external_url=http://${CC_LP_IP} \
   --var web_vm_type=default \
   --var db_vm_type=default \
   --var db_persistent_disk_type=100GB \
