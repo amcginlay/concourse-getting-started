@@ -73,7 +73,6 @@ CC_SUBDOMAIN_NAME=cls99env99     # ... or some ID for your environment within DO
 #########################################################################################
 
 CC_FQDN=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
-CC_APP_ROUTE=concourse.${CC_FQDN} # <--- where we expect to locate our Concourse instance
 CC_PROJECT_ID=$(gcloud config get-value core/project)
 CC_REGION=us-central1
 ```
@@ -178,20 +177,20 @@ bosh deploy -n -d concourse concourse.yml \
 CC_FQDN_ZONE=$(echo ${CC_FQDN} | tr '.' '-')
 gcloud dns managed-zones create ${CC_FQDN_ZONE} --description= --dns-name=${CC_FQDN}
 gcloud dns record-sets transaction start --zone=${CC_FQDN_ZONE}
-gcloud dns record-sets transaction add ${CC_LB_IP} --name=${CC_APP_ROUTE}. --ttl=60 --type=A --zone=us-central1-a
+gcloud dns record-sets transaction add ${CC_LB_IP} --name=concourse.${CC_FQDN}. --ttl=60 --type=A --zone=us-central1-a
 gcloud dns --project=${CC_PROJECT_ID} record-sets transaction execute --zone=us-central1-a
 ```
 ### Navigate To Concourse And Download `fly`
 
 ```
-echo "http://${CC_APP_ROUTE}" <--- this is where you'll find the Concourse web UI in a browser
+echo "http://concourse.${CC_FQDN}" <--- this is where you'll find the Concourse web UI in a browser
 ```
 
 Navigate to the Concourse web UI and download the `fly` CLI utils for the OS of your local machine.
 
 From your local machine, log-in via the `fly` CLI:
 ```
-fly -t concourse login -c http://<CC_APP_ROUTE> # NOTE http, not https !!!
+fly -t concourse login -c http://concourse.${CC_FQDN} # NOTE http, not https !!!
 ```
 
 Now follow the [IaaS independent instructions](../shared/README.md) to create your first pipeline.
