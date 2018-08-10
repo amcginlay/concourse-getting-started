@@ -147,7 +147,7 @@ cd ~/bbl-concourse/
 git clone https://github.com/concourse/concourse-deployment.git ~/bbl-concourse/concourse-deployment/
 cd ~/bbl-concourse/concourse-deployment/cluster/
 
-cat > ./bbl_ops.yml << 'EOF'
+cat > ./bbl_ops.yml <<-EOF
 - type: replace
   path: /instance_groups/name=web/vm_extensions?/-
   value: lb
