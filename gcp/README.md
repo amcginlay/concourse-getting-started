@@ -159,7 +159,6 @@ bosh deploy -d concourse concourse.yml \
   -o operations/basic-auth.yml \
   -o operations/privileged-http.yml \
   -o operations/privileged-https.yml \
-  -o operations/tls.yml \
   -o operations/web-network-extension.yml \
   --var network_name=default \
   --var external_url=$EXTERNAL_URL \
