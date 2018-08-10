@@ -179,8 +179,8 @@ CC_FQDN=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
 CC_FQDN_ZONE=$(echo ${CC_FQDN} | tr '.' '-')
 gcloud dns managed-zones create ${CC_FQDN_ZONE} --description= --dns-name=${CC_FQDN}
 gcloud dns record-sets transaction start --zone=${CC_FQDN_ZONE}
-gcloud dns record-sets transaction add ${CC_LB_IP} --name=concourse.${CC_FQDN}. --ttl=60 --type=A --zone=us-central1-a
-gcloud dns --project=$(gcloud config get-value core/project) record-sets transaction execute --zone=us-central1-a
+gcloud dns record-sets transaction add ${CC_LB_IP} --name=concourse.${CC_FQDN}. --ttl=60 --type=A --zone=${CC_FQDN_ZONE}
+gcloud dns --project=$(gcloud config get-value core/project) record-sets transaction execute --zone=${CC_FQDN_ZONE}
 ```
 
 ### Navigate To Concourse And Download `fly`
