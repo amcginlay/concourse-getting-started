@@ -4,7 +4,7 @@
 
 ## Install A Jumpbox
 
-## Set Up Variables On Local Machine
+### Set Up Variables On Local Machine
 
 ```
 GCP_USER=<YOUR_GCP_AUTHORIZED_EMAIL_ADDRESS>
