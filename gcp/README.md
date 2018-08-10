@@ -130,7 +130,7 @@ bbl up \
 
 Extract the external URL and credentials:
 ```
-export external_url="https://$(bbl lbs | awk -F': ' '{print $2}')"
+export EXTERNAL_URL="http://$(bbl lbs | awk -F': ' '{print $2}')"
 eval "$(bbl print-env)"
 ```
 
@@ -162,10 +162,10 @@ bosh deploy -d concourse concourse.yml \
   -o operations/tls.yml \
   -o operations/web-network-extension.yml \
   --var network_name=default \
-  --var external_url=$external_url \
+  --var external_url=$EXTERNAL_URL \
   --var web_vm_type=default \
   --var db_vm_type=default \
-  --var db_persistent_disk_type=10GB \
+  --var db_persistent_disk_type=100GB \
   --var worker_vm_type=default \
   --var deployment_name=concourse \
   --var web_network_name=private \
