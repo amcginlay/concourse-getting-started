@@ -31,7 +31,7 @@ gcloud compute instances create "jbox-concourse" \
 ### SSH To Jumpbox
 
 ```
-gcloud compute ssh ubuntu@concourse-jumpbox \
+gcloud compute ssh ubuntu@jbox-concourse \
   --project "${GCP_PROJECT_ID}" \
   --zone "us-central1-a"
 ```
