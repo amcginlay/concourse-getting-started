@@ -7,7 +7,6 @@
 ### Set Up Variables On Local Machine
 
 ```
-GCP_USER=<YOUR_GCP_AUTHORIZED_EMAIL_ADDRESS>
 GCP_PROJECT_ID=<TARGET_GCP_PROJECT_ID>
 ```
 
@@ -59,8 +58,7 @@ wget -O bbl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6
 Follow the on-screen prompts as your execute the following:
 
 ```
-CC_GCP_USER=fbloggs@gmail.com    # ... replace as appropriate
-gcloud auth login ${CC_GCP_USER} --quiet
+gcloud auth login --quiet
 ```
 
 ### Setup Jumpbox Variables
