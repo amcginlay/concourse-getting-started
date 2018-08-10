@@ -166,7 +166,7 @@ bosh deploy -d concourse concourse.yml \
   --var external_url=https://$(bbl lbs | awk -F': ' '{print $2}') \
   --var web_vm_type=default \
   --var db_vm_type=default \
-  --var db_persistent_disk_type=200GB \
+  --var db_persistent_disk_type=100GB \
   --var worker_vm_type=default \
   --var deployment_name=concourse \
   --var web_network_name=private \
