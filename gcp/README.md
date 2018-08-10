@@ -63,23 +63,25 @@ gcloud auth login --quiet
 
 ### Setup Jumpbox Variables
 
+In the ubuntu home directory on your jumpbox, create a hidden file named `.env` to store variables, the values of which describe your specific environment. You should customize the `.env` file to suit your target environment before continuing.
+
+Take the template .env file below and substitute in the proper values for your GCP project:
+
 Specify a bunch of variables:
 ```
-#########################################################################################
-# !!! YOU NEED TO MAKE VALUE CHANGES HERE !!!
-#########################################################################################
-CC_DOMAIN_NAME=pivotaledu.io     # ... or whatever you have registered for your group
-CC_SUBDOMAIN_NAME=cls99env99     # ... or some ID for your environment within DOMAIN_NAME
-#########################################################################################
+CC_DOMAIN_NAME=CHANGE_ME_DOMAIN_NAME                 # e.g. pivotaledu.io
+CC_SUBDOMAIN_NAME=CHANGE_ME_SUBDOMAIN_NAME           # e.g. cls99env66
 
 CC_FQDN=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
-CC_PROJECT_ID=$(gcloud config get-value core/project)
-CC_REGION=us-central1
 ```
 
-Check the above variable assignments look as you would expect:
-```
-set | grep '^CC_'
+### Persist Your Environment File
+
+Now that we have the `.env` file with our critical variables, we need to ensure that these get set into the shell, both now and every subsequent time the ubuntu user connects to the jumpbox.
+
+```bash
+source ~/.env
+echo "source ~/.env" >> ~/.bashrc
 ```
 
 ### Configure DNS at domain level
@@ -178,7 +180,7 @@ CC_FQDN_ZONE=$(echo ${CC_FQDN} | tr '.' '-')
 gcloud dns managed-zones create ${CC_FQDN_ZONE} --description= --dns-name=${CC_FQDN}
 gcloud dns record-sets transaction start --zone=${CC_FQDN_ZONE}
 gcloud dns record-sets transaction add ${CC_LB_IP} --name=concourse.${CC_FQDN}. --ttl=60 --type=A --zone=us-central1-a
-gcloud dns --project=${CC_PROJECT_ID} record-sets transaction execute --zone=us-central1-a
+gcloud dns --project=$(gcloud config get-value core/project) record-sets transaction execute --zone=us-central1-a
 ```
 ### Navigate To Concourse And Download `fly`
 
