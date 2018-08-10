@@ -115,7 +115,7 @@ gcloud projects add-iam-policy-binding $(gcloud config get-value core/project) \
   --role="roles/editor"
 ```
 
-Export BBL_GCP_SERVICE_ACCOUNT_KEY and execute BBL to build Jumpbox and BOSH director VM.  
+Execute BBL to build Jumpbox and BOSH director VM.  
 **Note** this also sets the BOSH Director's `cloud config`:
 ```
 # if next step fails due to "too many authentication failures" 
