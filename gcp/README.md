@@ -20,7 +20,7 @@ gcloud auth login ${GCP_USER}
 ### Create Jumpbox VM From Local Machine
 
 ```
-gcloud compute instances create "concourse-jumpbox" \
+gcloud compute instances create "jbox-concourse" \
   --image "ubuntu-1604-xenial-v20180418" \
   --image-project "ubuntu-os-cloud" \
   --boot-disk-size "200" \
