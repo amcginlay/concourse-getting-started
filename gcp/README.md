@@ -130,7 +130,7 @@ bbl up \
 
 Extract the external URL and credentials:
 ```
-CC_LB_IP=$(bbl lbs | awk -F': ' '{print $2}')"
+CC_LB_IP=$(bbl lbs | awk -F': ' '{print $2}')
 export EXTERNAL_URL=http://$CC_LB_IP
 eval "$(bbl print-env)"
 ```
