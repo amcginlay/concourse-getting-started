@@ -163,7 +163,7 @@ bosh deploy -d concourse concourse.yml \
   -o operations/tls.yml \
   -o operations/web-network-extension.yml \
   --var network_name=default \
-  --var external_url=$external_url \
+  --var external_url=https://$(bbl lbs | awk -F': ' '{print $2}') \
   --var web_vm_type=default \
   --var db_vm_type=default \
   --var db_persistent_disk_type=200GB \
