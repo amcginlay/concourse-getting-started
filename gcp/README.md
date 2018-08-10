@@ -128,7 +128,7 @@ bbl up \
   --gcp-service-account-key $HOME/bbl-concourse/bbl-service-account.json
 ```
 
-Extract the credentials
+Extract the credentials and authenticate the BOSH cli
 ```
 eval "$(bbl print-env)"
 ```
