@@ -189,6 +189,20 @@ gcloud dns record-sets transaction start --zone=concourse
 gcloud dns record-sets transaction execute --zone=concourse
 ```
 
+### Verify DNS
+
+Once `dig` can resolve the Concourse URL to an IP address, we're good to move on.
+
+```bash
+watch dig concourse.${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}.
+```
+
+This step is dependent on attaching a ${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} NS record-set to your registered domain.  This record-set must point to _every_ google domain server, for example:
+
+(screenshot from [AWS Route 53](https://aws.amazon.com/route53))
+
+![route_53_ns](route_53_ns.png)
+
 ### Navigate To Concourse And Download `fly`
 
 Navigate to the Concourse web UI at CC_EXTERNAL_URL and download the `fly` CLI utils for the OS of your local machine.
