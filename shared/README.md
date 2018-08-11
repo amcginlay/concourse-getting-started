@@ -30,11 +30,11 @@ fly -t concourse pipelines
 fly -t concourse unpause-pipeline -p concourse-sample-app-pipeline
 ```
 
-Return to the Concourse webpage, click `login` and select the `main`.  
+Return to the Concourse webpage, click `login` and authenticate yourself based upon the `secrets.yml` file created earlier then select `concourse-sample-app-pipeline`.
 
-You should now see a visual representation of our `pipeline` with the `build` job sandwiched between our two `resources` which fetch the source-code from git and push the artifact to Cloud Foundry respectively.  Concourse can handle multiple pipelines and these are listed behind the hamburger icon in the top-left hand corner.
+You should now see a visual representation of our `pipeline` with the `build` job sandwiched between our two `resources` which fetch the source-code from git and push the artifact to Cloud Foundry respectively.
 
-Because the git resource is a trigger dependency (indicated by a solid line between the `resource` and the `build` job) the `build` process will be automatically activated when it's unpaused and once again any time changes are commited and pushed to the `concourse-sample-app` git repo.
+Because the git resource is a trigger dependency (indicated by a solid line between the `resource` and the `build` job) the `build` process will have been automatically activated when we unpaused it and once again any time changes are pushed to the `concourse-sample-app` git repo.
 
 If you want to remove the trigger between the build job and it's dependency, remove the following line from `pipeline.yml` then re-issue the `set-pipeline` and `unpause-pipeline` commands as before.  The solid line between these components will now show as a dotted line.
 
