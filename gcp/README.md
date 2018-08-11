@@ -205,7 +205,7 @@ This step is dependent on attaching a ${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} NS 
 
 ### Navigate To Concourse And Download `fly`
 
-Navigate to the Concourse web UI at CC_EXTERNAL_URL and download the `fly` CLI utils for the OS of your local machine.
+Navigate to the Concourse web UI and download the `fly` CLI utils for the OS of your local machine.
 
 From your local machine, log-in via the `fly` CLI:
 ```
