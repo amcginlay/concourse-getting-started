@@ -20,8 +20,8 @@ gcloud auth login --quiet
 
 ```
 gcloud compute instances create "jbox-concourse" \
-  --image-family "ubuntu-1804-lts" \
   --image-project "ubuntu-os-cloud" \
+  --image-family "ubuntu-1804-lts" \
   --boot-disk-size "200" \
   --machine-type=f1-micro \
   --project "${GCP_PROJECT_ID}" \
