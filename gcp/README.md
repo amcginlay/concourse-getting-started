@@ -23,7 +23,7 @@ gcloud compute instances create "jbox-concourse" \
   --image-project "ubuntu-os-cloud" \
   --image-family "ubuntu-1804-lts" \
   --boot-disk-size "200" \
-  --machine-type=f1-micro \
+  --machine-type=g1-small \
   --project "${GCP_PROJECT_ID}" \
   --zone "us-central1-a"
 ```
