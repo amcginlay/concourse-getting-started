@@ -196,6 +196,8 @@ bosh deploy -n -d concourse concourse.yml \
 ### Configure DNS
 
 ```
+gcloud services enable dns.googleapis.com
+
 gcloud dns managed-zones create concourse \
   --dns-name=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} \
   --description=
