@@ -65,7 +65,7 @@ wget -O bbl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6
 Verify that these tools were installed:
 
 ```bash
-which unzip; which make; which om; which ruby; which terraform; which bosh; which bbl
+which unzip; which make; which ruby; which terraform; which bosh; which bbl
 ```
 
 Remember to return to the shell with regular privileges:
