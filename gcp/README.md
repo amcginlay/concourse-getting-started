@@ -104,10 +104,6 @@ source ~/.env
 echo "source ~/.env" >> ~/.bashrc
 ```
 
-### Configure DNS at domain level
-
-- TODO - re-write
-
 ### Increase GCP Quotas
 
 If necessary, increase GCP project quotas (`IAM & admin -> Quotas`) for the __us-central1__ region as follows:
