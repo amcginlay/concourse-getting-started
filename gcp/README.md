@@ -174,7 +174,7 @@ local_user:
   password: adm1npa55w0rd
 EOL
 
-bosh deploy -d concourse concourse.yml \
+bosh deploy -n -d concourse concourse.yml \
   -l ../versions.yml \
   -l secrets.yml \
   --vars-store cluster-creds.yml \
