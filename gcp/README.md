@@ -19,7 +19,8 @@ gcloud auth login --quiet
 ### Create Jumpbox VM From Local Machine
 
 ```
-gcloud services enable compute.googleapis.com
+gcloud services enable compute.googleapis.com \
+  --project "${GCP_PROJECT_ID}"
 
 gcloud compute instances create "jbox-concourse" \
   --image-project "ubuntu-os-cloud" \
