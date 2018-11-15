@@ -111,11 +111,11 @@ echo "source ~/.env" >> ~/.bashrc
 
 If necessary, increase GCP project quotas (`IAM & admin -> Quotas`) for the __us-central1__ region as follows:
 
-Quota type               | Quota Amount
------------------------- | ------------
-CPU                      | 100
-Persistent Disk SSD (GB) | 1000
-In-use IP addresses      | 32
+Quota type               | Min Quota Amount
+------------------------ | ----------------
+CPU                      | > 100
+Persistent Disk SSD (GB) | > 1000
+In-use IP addresses      | > 32
 
 ### BOSH Bootloader (BBL)
 
