@@ -119,7 +119,7 @@ In-use IP addresses      | > 32
 
 ### BOSH Bootloader (BBL)
 
-BBL will generate some files, so create a home for this operation and move there:
+[BBL](https://github.com/cloudfoundry/bosh-bootloader) will generate some files, so create a home for this operation and move there:
 ```
 mkdir ~/bbl-concourse && cd ~/bbl-concourse
 ```
