@@ -41,24 +41,23 @@ gcloud compute ssh ubuntu@jbox-concourse \
 
 ### Install Essential Jumpbox Tools
 
-Elevate privileges:
-
-```bash
-sudo su -
-```
-
 Install tools:
 
 ```
-apt update && apt --yes install unzip make ruby
+sudo apt update --yes && \
+sudo apt install --yes unzip && \
+sudo apt install --yes make && \
+sudo apt install --yes ruby
+```
 
+```
 wget -O terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip && \
   unzip terraform.zip && \
-  mv terraform /usr/local/bin
+  sudo mv terraform /usr/local/bin
   
 wget -O bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-5.3.1-linux-amd64 && \
   chmod +x bosh && \
-  mv bosh /usr/local/bin/
+  sudo mv bosh /usr/local/bin/
 
 wget -O bbl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6.9.0/bbl-v6.9.0_linux_x86-64 && \
   chmod +x bbl && \
