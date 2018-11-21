@@ -6,19 +6,19 @@
 
 ### Set Up Variables On Local Machine
 
-```
+```bash
 GCP_PROJECT_ID=<TARGET_GCP_PROJECT_ID>
 ```
 
 ### Authenticate Local Machine
 
-```
+```bash
 gcloud auth login --quiet
 ```
 
 ### Create Jumpbox VM From Local Machine
 
-```
+```bash
 gcloud services enable compute.googleapis.com \
   --project "${GCP_PROJECT_ID}"
 
@@ -33,7 +33,7 @@ gcloud compute instances create "jbox-concourse" \
 
 ### SSH To Jumpbox
 
-```
+```bash
 gcloud compute ssh ubuntu@jbox-concourse \
   --project "${GCP_PROJECT_ID}" \
   --zone "us-central1-a"
@@ -43,14 +43,14 @@ gcloud compute ssh ubuntu@jbox-concourse \
 
 Install tools:
 
-```
+```bash
 sudo apt update --yes && \
 sudo apt install --yes unzip && \
 sudo apt install --yes make && \
 sudo apt install --yes ruby
 ```
 
-```
+```bash
 wget -O terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip && \
   unzip terraform.zip && \
   sudo mv terraform /usr/local/bin
@@ -70,17 +70,11 @@ Verify that these tools were installed:
 which unzip; which make; which ruby; which terraform; which bosh; which bbl
 ```
 
-Remember to return to the shell with regular privileges:
-
-```bash
-exit
-```
-
 ### Authenticate Jumpbox
 
 Follow the on-screen prompts as your execute the following:
 
-```
+```bash
 gcloud auth login --quiet
 ```
 
@@ -90,7 +84,7 @@ In the ubuntu home directory on your jumpbox, create a hidden file named `.env` 
 
 Take the template `.env` file below and substitute in the proper values for your GCP project:
 
-```
+```bash
 CC_DOMAIN_NAME=CHANGE_ME_DOMAIN_NAME                 # e.g. pivotaledu.io
 CC_SUBDOMAIN_NAME=CHANGE_ME_SUBDOMAIN_NAME           # e.g. cls99env66
 
@@ -119,12 +113,14 @@ In-use IP addresses      | > 32
 ### BOSH Bootloader (BBL)
 
 [BBL](https://github.com/cloudfoundry/bosh-bootloader) will generate some files, so create a home for this operation and move there:
-```
+
+```bash
 mkdir ~/bbl-concourse && cd ~/bbl-concourse
 ```
 
-Create a service account for BBL
-```
+Create a service account for BBL:
+
+```bash
 gcloud iam service-accounts create bbl-service-account \
   --display-name "BBL service account"
 gcloud iam service-accounts keys create \
@@ -137,7 +133,8 @@ gcloud projects add-iam-policy-binding $(gcloud config get-value core/project) \
 
 Execute BBL to build Jumpbox and BOSH director VM.  
 **Note** this also sets the BOSH Director's `cloud config`:
-```
+
+```bash
 # if next step fails due to "too many authentication failures" 
 # condsider adding "IdentitiesOnly=yes" to ~/.ssh/config
 bbl up \
@@ -149,7 +146,8 @@ bbl up \
 ```
 
 Extract the external URL and credentials:
-```
+
+```bash
 CC_LB_IP=$(bbl lbs | awk -F': ' '{print $2}')
 eval "$(bbl print-env)"
 ```
@@ -157,12 +155,14 @@ eval "$(bbl print-env)"
 ### Deploy Concourse
 
 Upload a stemcell:
-```
+
+```bash
 bosh upload-stemcell https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-xenial-go_agent
 ```
 
 Deploy Concourse:
-```
+
+```bash
 git clone https://github.com/concourse/concourse-deployment.git ~/bbl-concourse/concourse-deployment/
 cd ~/bbl-concourse/concourse-deployment/cluster/
 
@@ -193,7 +193,7 @@ bosh deploy -n -d concourse concourse.yml \
 
 ### Configure DNS
 
-```
+```bash
 gcloud services enable dns.googleapis.com
 
 gcloud dns managed-zones create concourse \
@@ -229,7 +229,8 @@ This step is dependent on attaching a ${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} NS 
 Navigate to the Concourse web UI and download the `fly` CLI utils for the OS of your local machine.
 
 From your local machine, log-in via the `fly` CLI:
-```
+
+```bash
 fly -t concourse login -c http://concourse.${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} # NOTE http, not https !!!
 ```
 
