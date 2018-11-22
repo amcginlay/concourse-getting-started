@@ -4,6 +4,7 @@
 These instructions assume you've already followed one of the IaaS-specific paths to stand up a Concourse instance and the `fly` CLI is logged in to it.
 
 Fork the sample app at [https://github.com/amcginlay/concourse-sample-app](https://github.com/amcginlay/concourse-sample-app).
+This is so you can make code changes and see the pipeline work its magic.
 
 ![Fork Me](forkme.png "Fork Me")
 
