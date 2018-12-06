@@ -51,15 +51,18 @@ sudo apt install --yes ruby
 ```
 
 ```bash
-wget -O terraform.zip https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip && \
+VERSION=0.11.10
+wget -O terraform.zip https://releases.hashicorp.com/terraform/${VERSION}/terraform_${VERSION}_linux_amd64.zip && \
   unzip terraform.zip && \
   sudo mv terraform /usr/local/bin
-  
-wget -O bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-5.3.1-linux-amd64 && \
+
+VERSION=5.3.1
+wget -O bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-${VERSION}-linux-amd64 && \
   chmod +x bosh && \
   sudo mv bosh /usr/local/bin/
 
-wget -O bbl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v6.9.0/bbl-v6.9.0_linux_x86-64 && \
+VERSION=6.9.0
+wget -O bbl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v${VERSION}/bbl-v${VERSION}_linux_x86-64 && \
   chmod +x bbl && \
   sudo mv bbl /usr/local/bin/
 ```
