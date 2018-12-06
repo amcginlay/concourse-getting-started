@@ -126,9 +126,11 @@ Create a service account for BBL:
 ```bash
 gcloud iam service-accounts create bbl-service-account \
   --display-name "BBL service account"
+  
 gcloud iam service-accounts keys create \
   --iam-account="bbl-service-account@$(gcloud config get-value core/project).iam.gserviceaccount.com" \
   bbl-service-account.json
+  
 gcloud projects add-iam-policy-binding $(gcloud config get-value core/project) \
   --member="serviceAccount:bbl-service-account@$(gcloud config get-value core/project).iam.gserviceaccount.com" \
   --role="roles/editor"
