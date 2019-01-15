@@ -250,6 +250,8 @@ From your local machine, log-in via the `fly` CLI:
 fly -t concourse login -c http://concourse.${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} # NOTE http, not https !!!
 ```
 
+Use the username and password added to the `secrets.yml` file created above to login.
+
 Now follow the [IaaS independent instructions](../shared/README.md) to create your first pipeline.
 
 ### Task Complete!
