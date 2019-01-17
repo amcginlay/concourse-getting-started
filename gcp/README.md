@@ -247,7 +247,7 @@ Navigate to the Concourse web UI and download the `fly` CLI utils for the OS of 
 From your local machine, log-in via the `fly` CLI:
 
 ```bash
-fly -t concourse login -c http://concourse.${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} # NOTE http, not https !!!
+fly -t concourse login -c ${CC_EXTERNAL_URL} # NOTE http, not https !!!
 ```
 
 Use the username and password added to the `secrets.yml` file created above to login.
