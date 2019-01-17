@@ -240,11 +240,11 @@ This step is dependent on attaching a ${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} NS 
 echo ${CC_EXTERNAL_URL}
 ```
 
-### Navigate To Concourse And Download `fly`
+### Download `fly` and login
 
-Navigate to the Concourse web UI and download the `fly` CLI utils for the OS of your local machine.
+On your *local machine*, navigate to the Concourse web UI (CC_EXTERNAL_URL) and download the `fly` CLI utils for your OS.
 
-From your local machine, log-in via the `fly` CLI:
+Log-in via the `fly` CLI:
 
 ```bash
 fly -t concourse login -c ${CC_EXTERNAL_URL} # NOTE http, not https !!!
