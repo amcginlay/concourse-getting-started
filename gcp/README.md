@@ -9,12 +9,15 @@
 ```bash
 GCP_PROJECT_ID=<TARGET_GCP_PROJECT_ID>
 ```
+Note that this is the project ID not the name. You can find the ID on the project's home page, in the **Project Info** box.
 
 ### Authenticate Local Machine
 
 ```bash
 gcloud auth login --quiet
 ```
+
+_Note that you can do `gcloud config set project $GCP_PROJECT_ID` and `gcloud config set compute/zone us-central1-a` here and then omit the `--project` and `--zone` options and arguments below._
 
 ### Create Jumpbox VM From Local Machine
 
@@ -51,18 +54,18 @@ sudo apt install --yes ruby
 ```
 
 ```bash
-VERSION=0.11.10
-wget -O terraform.zip https://releases.hashicorp.com/terraform/${VERSION}/terraform_${VERSION}_linux_amd64.zip && \
+TF_VERSION=0.11.11
+wget -O terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip && \
   unzip terraform.zip && \
   sudo mv terraform /usr/local/bin
 
-VERSION=5.3.1
-wget -O bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-${VERSION}-linux-amd64 && \
+BOSH_VERSION=5.4.0
+wget -O bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-${BOSH_VERSION}-linux-amd64 && \
   chmod +x bosh && \
   sudo mv bosh /usr/local/bin/
 
-VERSION=6.9.0
-wget -O bbl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v${VERSION}/bbl-v${VERSION}_linux_x86-64 && \
+BBL_VERSION=7.0.0
+wget -O bbl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v${BBL_VERSION}/bbl-v${BBL_VERSION}_linux_x86-64 && \
   chmod +x bbl && \
   sudo mv bbl /usr/local/bin/
 ```
@@ -80,6 +83,8 @@ Follow the on-screen prompts as your execute the following:
 ```bash
 gcloud auth login --quiet
 ```
+
+You must, at this point, log in using the your GCP account credentials in order to perform later adminstrative operations. While this is not good practice in general, you will later be revoking these credentials from the jumpbox.
 
 ### Setup Jumpbox Variables
 
@@ -229,6 +234,12 @@ This step is dependent on attaching a ${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} NS 
 
 ![route_53_ns](route_53_ns.png)
 
+### Log out of GCP
+
+```bash
+gcloud auth revoke
+```
+
 ### Navigate To Concourse And Download `fly`
 
 Navigate to the Concourse web UI and download the `fly` CLI utils for the OS of your local machine.
@@ -238,6 +249,8 @@ From your local machine, log-in via the `fly` CLI:
 ```bash
 fly -t concourse login -c http://concourse.${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} # NOTE http, not https !!!
 ```
+
+Use the username and password added to the `secrets.yml` file created above to login.
 
 Now follow the [IaaS independent instructions](../shared/README.md) to create your first pipeline.
 
