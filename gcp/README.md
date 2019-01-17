@@ -84,7 +84,7 @@ Follow the on-screen prompts as your execute the following:
 gcloud auth login --quiet
 ```
 
-You must, at this point, log in using the your GCP account credentials in order to perform later adminstrative operations. While this is not good practice in general, you will later be revoking these credentials from the jumpbox.
+You must, at this point, log in using the your GCP account credentials in order to perform later adminstrative operations. While this is not good practice in general, this will suffice for testing purposes.
 
 ### Setup Jumpbox Variables
 
@@ -234,10 +234,10 @@ This step is dependent on attaching a ${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} NS 
 
 ![route_53_ns](route_53_ns.png)
 
-### Log out of GCP
+### Inspect the external URL for later use on the local machine
 
 ```bash
-gcloud auth revoke
+echo ${CC_EXTERNAL_URL}
 ```
 
 ### Navigate To Concourse And Download `fly`
