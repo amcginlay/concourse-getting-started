@@ -192,10 +192,10 @@ bosh deploy -n -d concourse concourse.yml \
   -o operations/web-network-extension.yml \
   --var network_name=default \
   --var external_url=$CC_EXTERNAL_URL \
-  --var web_vm_type=default \
+  --var web_vm_type=large \
   --var db_vm_type=default \
   --var db_persistent_disk_type=100GB \
-  --var worker_vm_type=default \
+  --var worker_vm_type=large \
   --var deployment_name=concourse \
   --var web_network_name=private \
   --var web_network_vm_extension=lb
