@@ -123,7 +123,7 @@ In-use IP addresses      | > 32
 [BBL](https://github.com/cloudfoundry/bosh-bootloader) will generate some files, so create a home for this operation and move there:
 
 ```bash
-mkdir -p ~/bbl-concourse/cloud-config && cd ~/bbl-concourse
+mkdir ~/bbl-concourse && cd ~/bbl-concourse
 ```
 
 Create a service account for BBL:
