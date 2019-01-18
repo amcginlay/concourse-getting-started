@@ -152,7 +152,14 @@ bbl plan \
   --gcp-region us-central1 \
   --gcp-service-account-key $HOME/bbl-concourse/bbl-service-account.json
 
-sed -e 's/root_disk_size_gb: 10$/root_disk_size_gb: 100/g' cloud-config/ops.yml > cloud-config/zz-large-disk.yml
+cat > cloud-config/zz-default.yml << EOF
+- type: replace
+  path: /vm_types/name=default/cloud_properties?
+  value:
+    machine_type: n1-standard-8
+    root_disk_size_gb: 100
+    root_disk_type: pd-ssd
+EOF
 
 bbl up \
   --name concourse \
@@ -199,10 +206,10 @@ bosh deploy -n -d concourse concourse.yml \
   -o operations/web-network-extension.yml \
   --var network_name=default \
   --var external_url=$CC_EXTERNAL_URL \
-  --var web_vm_type=large \
+  --var web_vm_type=default \
   --var db_vm_type=default \
   --var db_persistent_disk_type=100GB \
-  --var worker_vm_type=large \
+  --var worker_vm_type=default \
   --var deployment_name=concourse \
   --var web_network_name=private \
   --var web_network_vm_extension=lb
