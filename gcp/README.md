@@ -123,7 +123,7 @@ In-use IP addresses      | > 32
 [BBL](https://github.com/cloudfoundry/bosh-bootloader) will generate some files, so create a home for this operation and move there:
 
 ```bash
-mkdir ~/bbl-concourse && cd ~/bbl-concourse
+mkdir -p ~/bbl-concourse/cloud-config && cd ~/bbl-concourse
 ```
 
 Create a service account for BBL:
@@ -145,8 +145,15 @@ Execute BBL to build Jumpbox and BOSH director VM.
 **Note** this also sets the BOSH Director's `cloud config`:
 
 ```bash
-# if next step fails due to "too many authentication failures" 
-# condsider adding "IdentitiesOnly=yes" to ~/.ssh/config
+bbl plan \
+  --name concourse \
+  --lb-type concourse \
+  --iaas gcp \
+  --gcp-region us-central1 \
+  --gcp-service-account-key $HOME/bbl-concourse/bbl-service-account.json
+
+sed -e 's/root_disk_size_gb: 10$/root_disk_size_gb: 100/g' cloud-config/ops.yml > cloud-config/zz-large-disk.yml
+
 bbl up \
   --name concourse \
   --lb-type concourse \
