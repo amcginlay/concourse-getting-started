@@ -123,7 +123,7 @@ In-use IP addresses      | > 32
 [BBL](https://github.com/cloudfoundry/bosh-bootloader) will generate some files, so create a home for this operation and move there:
 
 ```bash
-mkdir ~/bbl-concourse && cd ~/bbl-concourse
+mkdir -p ~/bbl-concourse/cloud-config && cd ~/bbl-concourse
 ```
 
 Create a service account for BBL:
@@ -145,20 +145,22 @@ Execute BBL to build Jumpbox and BOSH director VM.
 **Note** this also sets the BOSH Director's `cloud config`:
 
 ```bash
-bbl plan \
-  --name concourse \
-  --lb-type concourse \
-  --iaas gcp \
-  --gcp-region us-central1 \
-  --gcp-service-account-key ~/bbl-concourse/bbl-service-account.json
-
-cat > cloud-config/zz-default.yml << EOF
+cat > cloud-config/n1-custom-1.yml << EOF
 - type: replace
-  path: /vm_types/name=default/cloud_properties?
+  path: /vm_types/name=custom/cloud_properties?
   value:
-    machine_type: n1-standard-8
+    machine_type: n1-custom-1
     root_disk_size_gb: 100
     root_disk_type: pd-ssd
+
+- type: replace
+  path: /vm_types/-
+  value:
+    name: n1-custom-1
+    cloud_properties:
+      machine_type: n1-custom-1
+      root_disk_size_gb: 100
+      root_disk_type: pd-ssd
 EOF
 
 bbl up \
@@ -206,10 +208,10 @@ bosh deploy -n -d concourse concourse.yml \
   -o operations/web-network-extension.yml \
   --var network_name=default \
   --var external_url=$CC_EXTERNAL_URL \
-  --var web_vm_type=default \
-  --var db_vm_type=default \
+  --var web_vm_type=custom \
+  --var db_vm_type=custom \
   --var db_persistent_disk_type=100GB \
-  --var worker_vm_type=default \
+  --var worker_vm_type=custom \
   --var deployment_name=concourse \
   --var web_network_name=private \
   --var web_network_vm_extension=lb
