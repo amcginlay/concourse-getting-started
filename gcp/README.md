@@ -150,7 +150,7 @@ bbl plan \
   --lb-type concourse \
   --iaas gcp \
   --gcp-region us-central1 \
-  --gcp-service-account-key $HOME/bbl-concourse/bbl-service-account.json
+  --gcp-service-account-key ~/bbl-concourse/bbl-service-account.json
 
 cat > cloud-config/zz-default.yml << EOF
 - type: replace
@@ -166,7 +166,7 @@ bbl up \
   --lb-type concourse \
   --iaas gcp \
   --gcp-region us-central1 \
-  --gcp-service-account-key $HOME/bbl-concourse/bbl-service-account.json
+  --gcp-service-account-key ~/bbl-concourse/bbl-service-account.json
 ```
 
 Extract the external URL and credentials:
