@@ -145,15 +145,13 @@ Execute BBL to build Jumpbox and BOSH director VM.
 **Note** this also sets the BOSH Director's `cloud config`:
 
 ```bash
-cat > cloud-config/zz-custom.yml << EOF
+cat > cloud-config/zz-default.yml << EOF
 - type: replace
-  path: /vm_types/-
+  path: /vm_types/name=default/cloud_properties?
   value:
-    name: custom
-    cloud_proerties:
-      machine_type: n1-standard-8
-      root_disk_size_gb: 100
-      root_disk_type: pd-sdd
+    machine_type: n1-standard-1
+    root_disk_size_gb: 100
+    root_disk_type: pd-ssd
 EOF
 
 bbl up \
@@ -201,10 +199,10 @@ bosh deploy -n -d concourse concourse.yml \
   -o operations/web-network-extension.yml \
   --var network_name=default \
   --var external_url=$CC_EXTERNAL_URL \
-  --var web_vm_type=custom \
-  --var db_vm_type=custom \
+  --var web_vm_type=default \
+  --var db_vm_type=default \
   --var db_persistent_disk_type=100GB \
-  --var worker_vm_type=custom \
+  --var worker_vm_type=default \
   --var deployment_name=concourse \
   --var web_network_name=private \
   --var web_network_vm_extension=lb
