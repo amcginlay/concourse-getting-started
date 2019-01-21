@@ -95,8 +95,6 @@ Take the template `.env` file below and substitute in the proper values for your
 ```bash
 CC_DOMAIN_NAME=CHANGE_ME_DOMAIN_NAME                 # e.g. pivotaledu.io
 CC_SUBDOMAIN_NAME=CHANGE_ME_SUBDOMAIN_NAME           # e.g. cls99env66
-
-CC_EXTERNAL_URL=http://concourse.${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}
 ```
 
 ### Persist Your Environment File
@@ -198,7 +196,7 @@ bosh deploy -n -d concourse concourse.yml \
   -o operations/privileged-https.yml \
   -o operations/web-network-extension.yml \
   --var network_name=default \
-  --var external_url=$CC_EXTERNAL_URL \
+  --var external_url=http://$CC_LB_IP \
   --var web_vm_type=default \
   --var db_vm_type=default \
   --var db_persistent_disk_type=100GB \
@@ -208,43 +206,10 @@ bosh deploy -n -d concourse concourse.yml \
   --var web_network_vm_extension=lb
 ```
 
-### Configure DNS
-
-```bash
-gcloud services enable dns.googleapis.com
-
-gcloud dns managed-zones create concourse \
-  --dns-name=${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} \
-  --description=
-
-gcloud dns record-sets transaction start --zone=concourse
-
-  gcloud dns record-sets transaction \
-    add ${CC_LB_IP} \
-    --name=concourse.${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}. \
-    --ttl=60 --type=A --zone=concourse
-
-gcloud dns record-sets transaction execute --zone=concourse
-```
-
-### Verify DNS
-
-Once `dig` can resolve the Concourse URL to an IP address, we're good to move on.
-
-```bash
-watch dig concourse.${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME}.
-```
-
-This step is dependent on attaching a ${CC_SUBDOMAIN_NAME}.${CC_DOMAIN_NAME} NS record-set to your registered domain.  This record-set must point to _every_ google domain server, for example:
-
-(screenshot from [AWS Route 53](https://aws.amazon.com/route53))
-
-![route_53_ns](route_53_ns.png)
-
 ### Inspect the external URL for later use on the local machine
 
 ```bash
-echo ${CC_EXTERNAL_URL}
+echo http://$CC_LB_IP
 ```
 
 ### Download `fly` and login
@@ -254,7 +219,7 @@ On your *local machine*, navigate to the Concourse web UI (CC_EXTERNAL_URL) and 
 Log-in via the `fly` CLI:
 
 ```bash
-fly -t concourse login -c ${CC_EXTERNAL_URL} # NOTE http, not https !!!
+fly -t concourse login -c http://$CC_LB_IP
 ```
 
 Use the username and password added to the `secrets.yml` file created above to login.
