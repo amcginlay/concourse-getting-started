@@ -145,11 +145,8 @@ Execute BBL to build Jumpbox and BOSH director VM.
 ```bash
 cat > cloud-config/zz-default.yml << EOF
 - type: replace
-  path: /vm_types/name=default/cloud_properties?
-  value:
-    machine_type: n1-standard-1
-    root_disk_size_gb: 100
-    root_disk_type: pd-ssd
+  path: /vm_types/name=default/cloud_properties/root_disk_size_gb
+  value: 200
 EOF
 
 bbl up \
