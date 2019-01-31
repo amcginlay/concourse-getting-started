@@ -211,9 +211,8 @@ echo http://$CC_LB_IP
 
 ### Download `fly` and login
 
-On your *local machine*, navigate to the Concourse web UI (CC_EXTERNAL_URL) and download the `fly` CLI utils for your OS.
-
-Log-in via the `fly` CLI:
+On your *local machine*, navigate to the Concourse web UI (CC_EXTERNAL_URL), download the 
+`fly` CLI utils for your OS then log-in via the `fly` CLI:
 
 ```bash
 fly -t concourse login -c http://$CC_LB_IP
