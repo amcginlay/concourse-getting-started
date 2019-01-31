@@ -224,6 +224,6 @@ fly -t concourse login -c http://$CC_LB_IP
 
 Use the username and password added to the `secrets.yml` file created above to login.
 
-Now follow the [IaaS independent instructions](../shared/README.md) to create your first pipeline.
+### Create a pipeline
 
-### Task Complete!
+Follow [THIS LINK](../shared/README.md) to create your first pipeline using IaaS independent instructions.
