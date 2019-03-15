@@ -64,7 +64,7 @@ wget -O bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-${BOSH_VERSION
   chmod +x bosh && \
   sudo mv bosh /usr/local/bin/
 
-BBL_VERSION=7.0.0
+BBL_VERSION=7.1.0
 wget -O bbl https://github.com/cloudfoundry/bosh-bootloader/releases/download/v${BBL_VERSION}/bbl-v${BBL_VERSION}_linux_x86-64 && \
   chmod +x bbl && \
   sudo mv bbl /usr/local/bin/
