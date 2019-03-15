@@ -177,6 +177,7 @@ Deploy Concourse:
 ```bash
 git clone https://github.com/concourse/concourse-deployment.git ~/bbl-concourse/concourse-deployment/
 cd ~/bbl-concourse/concourse-deployment/cluster/
+git checkout tags/v4.2.2 # fix at this version
 
 cat >secrets.yml <<EOL
 local_user:
